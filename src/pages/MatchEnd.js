@@ -1,13 +1,13 @@
 import React from "react";
 
-const GameOver = () => {
+const MatchEnd = () => {
     return (
         <div>
             <h1>
-                GameOver Screen
+                Match End Screen
             </h1>
         </div>
     );
 };
 
-export default GameOver;
+export default MatchEnd;

@@ -6,17 +6,17 @@ const Navbar = () => {
         <>
             <Nav>
                 <NavMenu>
-                    <NavLink to="/home">
-                        Home
+                    <NavLink to="/Start">
+                        Start
                     </NavLink>
-                    <NavLink to="/setup">
+                    <NavLink to="/Setup">
                         Setup
                     </NavLink>
-                    <NavLink to="/match">
+                    <NavLink to="/Match">
                         Match
                     </NavLink>
-                    <NavLink to="/gameover">
-                        Game Over
+                    <NavLink to="/MatchEnd">
+                        Match End
                     </NavLink>
                 </NavMenu>
             </Nav>
