@@ -1,13 +1,13 @@
 import React from "react";
 
-const Home = () => {
+const Start = () => {
     return (
         <div>
             <h1>
-                Home Screen
+                Start Screen
             </h1>
         </div>
     );
 };
 
-export default Home;
+export default Start;
