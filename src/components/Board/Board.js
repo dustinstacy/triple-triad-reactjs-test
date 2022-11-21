@@ -16,15 +16,10 @@ const StyledBoard = styled.div`
 export default function Board() {
   return (
     <StyledBoard>
-      <Cell label={1} />
-      <Cell label={2} />
-      <Cell label={3} />
-      <Cell label={4} />
-      <Cell label={5} />
-      <Cell label={6} />
-      <Cell label={7} />
-      <Cell label={8} />
-      <Cell label={9} />
+      {Array.from({ length: 9 }).map((_, i) => (
+        <Cell label={i} />
+      ))}
+      ;
     </StyledBoard>
   );
 }

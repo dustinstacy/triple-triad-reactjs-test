@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "../components/Button/Button";
 import Logo from "../components/Logo/Logo";
 import styled from "styled-components";
+import logo from "../images/logo.png";
 
 const StartLayout = styled.div`
   width: calc(100vw - 10px);
@@ -40,7 +41,7 @@ export default function Start() {
   return (
     <StartLayout>
       <StartLogo>
-        <Logo />
+        <Logo src={logo} />
       </StartLogo>
       <StartMenu>
         <Link to="./Setup">
