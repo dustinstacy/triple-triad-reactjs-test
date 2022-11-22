@@ -39,16 +39,21 @@ const StartMenu = styled.div`
 
 export default function Start() {
   return (
-    <StartLayout>
-      <StartLogo>
-        <Logo src={logo} />
-      </StartLogo>
-      <StartMenu>
-        <Link to="./Setup">
-          <Button label={"New Game"} />
-        </Link>
-        <Button label={"How to play"} />
-      </StartMenu>
-    </StartLayout>
+    <div>
+      <StartLayout>
+        <StartLogo>
+          <Logo src={logo} />
+        </StartLogo>
+        <StartMenu>
+          <Link to="./Setup">
+            <Button label={"New Game"} />
+          </Link>
+          <Button label={"How to play"} />
+          <Link to="DevEnv">
+            <Button label={"Dev page"} />
+          </Link>
+        </StartMenu>
+      </StartLayout>
+    </div>
   );
 }

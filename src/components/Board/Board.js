@@ -19,7 +19,6 @@ export default function Board() {
       {Array.from({ length: 9 }).map((_, i) => (
         <Cell label={i} />
       ))}
-      ;
     </StyledBoard>
   );
 }
