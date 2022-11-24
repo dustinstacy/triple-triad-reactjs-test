@@ -17,9 +17,8 @@ export default function Board() {
   return (
     <StyledBoard>
       {Array.from({ length: 9 }).map((_, i) => (
-        <Cell label={i} />
+        <Cell key={i} label={i} />
       ))}
-      ;
     </StyledBoard>
   );
 }

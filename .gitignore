@@ -11,6 +11,10 @@
 # production
 /build
 
+#file types
+*.xlsx
+*.xml
+
 # misc
 .DS_Store
 .env.local
@@ -24,3 +28,5 @@ yarn-error.log*
 
 reactinfo.md
 .vscode
+
+card-data.json

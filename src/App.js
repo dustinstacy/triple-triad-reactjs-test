@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
-// import Navbar from './components/Navbar/Navbar';
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Start from "./pages/Start";
 import Setup from "./pages/Setup";
 import Match from "./pages/Match";
 import MatchEnd from "./pages/MatchEnd";
+import DevEnv from "./pages/DevEnv";
 
 export default function App() {
   return (
@@ -15,6 +15,7 @@ export default function App() {
         <Route path="/Setup" element={<Setup />} />
         <Route path="/Match" element={<Match />} />
         <Route path="/MatchEnd" element={<MatchEnd />} />
+        <Route path="/DevEnv" element={<DevEnv />} />
       </Routes>
     </Router>
   );
