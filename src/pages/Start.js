@@ -1,40 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "../components/Button/Button";
-import Logo from "../components/Logo/Logo";
 import styled from "styled-components";
-
-const StartLayout = styled.div`
-  width: calc(100vw - 10px);
-  height: calc(100vh - 10px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 2px;
-  border: 2px solid black;
-`;
-
-const StartLogo = styled.div`
-  width: 70vw;
-  height: 30vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -5vw;
-  border: 2px solid black;
-`;
-
-const StartMenu = styled.div`
-  width: 20vw;
-  height: 8vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2vw;
-  border: 2px solid black;
-`;
+import Button from "../components/Button";
 
 export default function Start() {
   return (
@@ -47,7 +14,6 @@ export default function Start() {
           <Link to="./Setup">
             <Button label={"New Game"} />
           </Link>
-          <Button label={"How to play"} />
           <Link to="DevEnv">
             <Button label={"Dev page"} />
           </Link>
@@ -56,3 +22,38 @@ export default function Start() {
     </div>
   );
 }
+
+const StartLayout = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+
+const StartLogo = styled.div`
+  width: 70vw;
+  height: 30vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StartMenu = styled.div`
+  width: 20vw;
+  height: 10vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2vw;
+  border: 2px solid black;
+  border-radius: 10%;
+`;
+
+const Logo = styled.img`
+  width: 100%;
+  height: 100%;
+`;

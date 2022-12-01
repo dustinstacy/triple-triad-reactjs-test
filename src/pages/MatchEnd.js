@@ -1,7 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "../components/Button/Button";
 import styled from "styled-components";
+import Button from "../components/Button";
+
+export default function MatchEnd() {
+  return (
+    <MatchEndLayout>
+      <Winner>Winner</Winner>
+      <Results>
+        <Keeper>Keeper</Keeper>
+        <Stats>Stats</Stats>
+      </Results>
+      <ButtonBar>
+        <Link to="../Match">
+          <Button label="Rematch" />
+        </Link>
+        <Link to="../Setup">
+          <Button label="New Game" />
+        </Link>
+        <Link to="/">
+          <Button label="Main Menu" />
+        </Link>
+      </ButtonBar>
+    </MatchEndLayout>
+  );
+}
 
 const MatchEndLayout = styled.div`
   width: calc(100vw - 10px);
@@ -47,32 +70,9 @@ const Stats = styled.div`
 
 const ButtonBar = styled.div`
   width: 60vw;
-  height; 7vw;
+  height: 7vw;
   display: flex;
   align-items: center;
   justify-content: space-around;
   border: 2px solid black;
 `;
-
-export default function MatchEnd() {
-  return (
-    <MatchEndLayout>
-      <Winner>Winner</Winner>
-      <Results>
-        <Keeper>Keeper</Keeper>
-        <Stats>Stats</Stats>
-      </Results>
-      <ButtonBar>
-        <Link to="../Match">
-          <Button label="Rematch" />
-        </Link>
-        <Link to="../Setup">
-          <Button label="New Game" />
-        </Link>
-        <Link to="/">
-          <Button label="Main Menu" />
-        </Link>
-      </ButtonBar>
-    </MatchEndLayout>
-  );
-}

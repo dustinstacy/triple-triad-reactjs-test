@@ -1,4 +1,4 @@
-import { cards } from "../card-data/card-data";
+import { cards } from "./card-data/card-data";
 
 const cardById = (array) => {
   array.forEach((id) => {

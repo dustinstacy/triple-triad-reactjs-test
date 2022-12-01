@@ -1,7 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "../components/Button/Button";
 import styled from "styled-components";
+import Button from "../components/Button";
+
+export default function DevEnv() {
+  return (
+    <DevLayout>
+      <DevButton>
+        <Link to="/">
+          <Button label="Main Menu" />
+        </Link>
+      </DevButton>
+    </DevLayout>
+  );
+}
 
 const DevLayout = styled.div`
   width: calc(100vw - 10px);
@@ -16,15 +28,3 @@ const DevButton = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-
-export default function DevEnv() {
-  return (
-    <DevLayout>
-      <DevButton>
-        <Link to="/">
-          <Button label="Main Menu" />
-        </Link>
-      </DevButton>
-    </DevLayout>
-  );
-}

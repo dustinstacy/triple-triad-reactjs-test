@@ -1,33 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "../components/Button/Button";
 import styled from "styled-components";
-
-const SetupLayout = styled.div`
-  width: calc(100vw - 10px);
-  height: calc(100vh - 10px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 2px;
-  border: 2px solid black;
-`;
-
-const SetupMenu = styled.div`
-  width: 60vw;
-  height: 40vw;
-  margin-bottom: 1vw;
-  border: 2px solid black;
-`;
-
-const ButtonBar = styled.div`
-  width: 60vw;
-  heigt: 4vw;
-  display: flex;
-  justify-content: space-around;
-  border: 2px solid black;
-`;
+import Button from "../components/Button";
 
 export default function Setup() {
   return (
@@ -44,3 +18,31 @@ export default function Setup() {
     </SetupLayout>
   );
 }
+
+const SetupLayout = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+
+const SetupMenu = styled.div`
+  width: 60vw;
+  height: 40vw;
+  margin-bottom: 1vw;
+  border: 2px solid black;
+  border-radius: 5%;
+`;
+
+const ButtonBar = styled.div`
+  width: 50vw;
+  height: 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 2px solid black;
+  border-radius: 20%;
+`;
