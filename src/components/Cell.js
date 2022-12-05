@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 const Cell = (card) => {
-  const [cellOne, setCellOne] = useState("");
+  // const [cellOne, setCellOne] = useState("");
   const [clicked, setClicked] = useState(false);
 
   const toggle = (e) => {

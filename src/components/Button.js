@@ -8,7 +8,6 @@ export default function Button({ label }) {
 const StyledButton = styled.button`
   width: 10vw;
   height: 3vw;
-  margin: 0.3vw;
   color: black;
   border: 2px solid black;
   border-radius: 5px;

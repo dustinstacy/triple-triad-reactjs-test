@@ -16,10 +16,10 @@ const Match = () => {
   //  const [cellTwo, setCellTwo] = useState("");
   //  const [practice, setPractice] = useState("");
   //
-  const boardState = {
-    cellOne,
-    setCellOne,
-  };
+  // const boardState = {
+  //   cellOne,
+  //   setCellOne,
+  // };
 
   const playerDeck = [];
 
