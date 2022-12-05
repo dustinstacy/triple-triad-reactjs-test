@@ -1,37 +1,56 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const Card = (card) => {
-  const [cardSelected, setCardSelected] = useState("false");
+const Card = (card, index) => {
+  // const [cardSelected, setCardSelected] = useState("false");
 
-  const handleClick = (e) => {
-    const card = e.target;
-    setCardSelected((current) => !current);
-    if (cardSelected) {
-      card.style.transform = "scale(1.3)";
-    } else if (!cardSelected) {
-      card.style.transform = "scale(1)";
-    }
-    console.log(card);
+  // const handleClick = (e) => {
+  //   const card = e.target;
+  //   setCardSelected((current) => !current);
+  //   if (cardSelected) {
+  //     card.style.transform = "scale(1.3)";
+  //   } else if (!cardSelected) {
+  //     card.style.transform = "scale(1)";
+  //   }
+  //   console.log(card);
+  // };
+
+  const dragStart = () => {
+    console.log("drag start");
+  };
+
+  const dragDrop = () => {
+    console.log("drag drop");
+  };
+  const dragEnd = () => {
+    console.log("drag end");
   };
 
   return (
     <Container
       className="card"
       number={card.number}
+      key={index}
       name={card.name}
-      onClick={handleClick}
+      data-id={index}
+      draggable={true}
+      onDragStart={dragStart}
+      onDragOver={(e) => e.preventDefault()}
+      onDragEnter={(e) => e.preventDefault()}
+      onDragLeave={(e) => e.preventDefault()}
+      onDrop={dragDrop}
+      onDragEnd={dragEnd}
     >
       <CharImage
         src={`../images/cardImages/card${card.number}.png`}
         alt={card.name}
       ></CharImage>
-      <Values>
+      {/* <Values>
         <Up>{card.values[0]}</Up>
         <Right>{card.values[1]}</Right>
         <Left>{card.values[2]}</Left>
         <Down>{card.values[3]}</Down>
-      </Values>
+      </Values> */}
     </Container>
   );
 };
