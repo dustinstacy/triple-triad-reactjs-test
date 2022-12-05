@@ -30,12 +30,12 @@ const Card = forwardRef((card, ref) => {
         src={`../images/cardImages/card${card.number}.png`}
         alt={card.name}
       ></CharImage>
-      {/* <Values>
+      <Values>
         <Up>{card.values[0]}</Up>
         <Right>{card.values[1]}</Right>
         <Left>{card.values[2]}</Left>
         <Down>{card.values[3]}</Down>
-      </Values> */}
+      </Values>
     </Container>
   );
 });
