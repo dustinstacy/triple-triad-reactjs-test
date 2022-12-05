@@ -1,40 +1,44 @@
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import styled from "styled-components";
 
-const Card = (card) => {
-  const [cardSelected, setCardSelected] = useState("false");
+const Card = forwardRef((card, ref) => {
+  // const [cardBeingDragged, setCardBeingDragged] = useState(null);
 
-  const handleClick = (e) => {
-    const card = e.target;
-    setCardSelected((current) => !current);
-    if (cardSelected) {
-      card.style.transform = "scale(1.3)";
-    } else if (!cardSelected) {
-      card.style.transform = "scale(1)";
-    }
-    console.log(card);
-  };
+  // const handleClick = (e) => {
+  //   const card = e.target;
+  //   setCardSelected((current) => !current);
+  //   if (cardSelected) {
+  //     card.style.transform = "scale(1.3)";
+  //   } else if (!cardSelected) {
+  //     card.style.transform = "scale(1)";
+  //   }
+  //   console.log(card);
+  // };
+
+  // useImperativeHandle(ref, () => ({
+  //   dragStart(e) {
+  //     console.log("drag start");
+  //     console.log(e.target);
+  //     alert("Child function called");
+  //   },
+  // }));
+  // };
 
   return (
-    <Container
-      className="card"
-      number={card.number}
-      name={card.name}
-      onClick={handleClick}
-    >
+    <Container className="card" data-id={card.number} name={card.name}>
       <CharImage
         src={`../images/cardImages/card${card.number}.png`}
         alt={card.name}
       ></CharImage>
-      <Values>
+      {/* <Values>
         <Up>{card.values[0]}</Up>
         <Right>{card.values[1]}</Right>
         <Left>{card.values[2]}</Left>
         <Down>{card.values[3]}</Down>
-      </Values>
+      </Values> */}
     </Container>
   );
-};
+});
 
 const Container = styled.div`
   width: 11vw;
