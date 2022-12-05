@@ -3,33 +3,47 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import { cards } from "../card-data/card-data";
-import Card from "../components/Card";
 
 const DECKSIZE = 1;
 
 const width = 3;
 
-export default function DevEnv() {
+const DevEnv = () => {
   const [boardArray, setBoardArray] = useState([]);
   const [redHand, setRedHand] = useState([]);
   const [blueHand, setBlueHand] = useState([]);
+  const [cardBeingDragged, setCardBeingDragged] = useState(null);
+  const [cellBeingFilled, setCellBeingFilled] = useState(null);
+
+  const dragStart = (e) => {
+    console.log("drag start");
+    console.log(e.target);
+    setCardBeingDragged(e.target);
+  };
+
+  const dragDrop = (e) => {
+    console.log("drag drop");
+    console.log(e.target);
+    setCellBeingFilled(e.target);
+  };
+
+  const dragEnd = () => {
+    console.log("drag end");
+
+    const cellBeingFilledID = parseInt(cellBeingFilled.getAttribute("data-id"));
+    const cardBeingDraggedID = parseInt(
+      cardBeingDragged.getAttribute("data-id")
+    );
+
+    console.log("cardBeingDraggedId", cardBeingDraggedID);
+    console.log("cellBeingFilledID", cellBeingFilledID);
+  };
 
   const randomizeHand = (array) => {
     for (let i = 0; i < DECKSIZE; i++) {
       const randomIndex = Math.floor(Math.random() * cards.length);
       array.push(Object.values(cards)[randomIndex]);
     }
-  };
-
-  const dragStart = () => {
-    console.log("drag start");
-  };
-
-  const dragDrop = () => {
-    console.log("drag drop");
-  };
-  const dragEnd = () => {
-    console.log("drag end");
   };
 
   const createBoard = () => {
@@ -55,8 +69,6 @@ export default function DevEnv() {
     createHands();
   }, []);
 
-  console.log(boardArray);
-
   return (
     <DevLayout>
       <DevButton>
@@ -66,19 +78,22 @@ export default function DevEnv() {
       </DevButton>
       <Table>
         <Hand>
-          {redHand.map((card, index) => (
+          {redHand.map((card) => (
             <Card
+              className="card"
               {...card}
-              key={index}
-              data-id={index}
+              key={card.number}
+              data-id={card.number}
+              name={card.name}
               draggable={true}
               onDragStart={dragStart}
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => e.preventDefault()}
-              onDragLeave={(e) => e.preventDefault()}
-              onDrop={dragDrop}
               onDragEnd={dragEnd}
-            />
+            >
+              <CharImage
+                src={`../images/cardImages/card${card.number}.png`}
+                alt={card.name}
+              ></CharImage>
+            </Card>
           ))}
         </Hand>
         <Board>
@@ -87,36 +102,34 @@ export default function DevEnv() {
               {...cell}
               key={index}
               data-id={index}
-              draggable={false}
-              onDragStart={dragStart}
               onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => e.preventDefault()}
-              onDragLeave={(e) => e.preventDefault()}
               onDrop={dragDrop}
-              onDragEnd={dragEnd}
             />
           ))}
         </Board>
         <Hand>
-          {blueHand.map((card, index) => (
+          {blueHand.map((card) => (
             <Card
+              className="card"
               {...card}
-              key={index}
-              data-id={index}
+              key={card.number}
+              data-id={card.number}
+              name={card.name}
               draggable={true}
               onDragStart={dragStart}
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => e.preventDefault()}
-              onDragLeave={(e) => e.preventDefault()}
-              onDrop={dragDrop}
               onDragEnd={dragEnd}
-            />
+            >
+              <CharImage
+                src={`../images/cardImages/card${card.number}.png`}
+                alt={card.name}
+              ></CharImage>
+            </Card>
           ))}
         </Hand>
       </Table>
     </DevLayout>
   );
-}
+};
 
 const DevLayout = styled.div`
   width: 100vw;
@@ -188,3 +201,20 @@ const Table = styled.div`
   display: flex;
   justify-content: space-around;
 `;
+
+const Card = styled.div`
+  width: 11vw;
+  height: calc(11vw * 1.4);
+  cursor: pointer;
+  border-radius: 4px;
+`;
+
+const CharImage = styled.img`
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 8px;
+  border: 2px solid black;
+`;
+
+export default DevEnv;
