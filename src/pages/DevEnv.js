@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import { cards } from "../card-data/card-data";
 
 const DECKSIZE = 5;
+const MAX_VALUE = 10;
 
 const width = 3;
 
@@ -14,6 +15,65 @@ const DevEnv = () => {
   const [blueHand, setBlueHand] = useState([]);
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
   const [cellBeingFilled, setCellBeingFilled] = useState(null);
+
+  const randomIntFromInterval = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  const common = randomIntFromInterval(8, 12);
+  const uncommon = randomIntFromInterval(13, 17);
+  const rare = randomIntFromInterval(18, 22);
+  const epic = randomIntFromInterval(23, 27);
+  const legendary = randomIntFromInterval(28, 32);
+
+  const randomizeHand = useCallback((array) => {
+    for (let i = 0; i < DECKSIZE; i++) {
+      const randomIndex = Math.floor(Math.random() * cards.length);
+      array.push(Object.values(cards)[randomIndex]);
+    }
+  }, []);
+
+  const randomizeValues = useCallback((rarity, max, len = 4) => {
+    let startValues = new Array(len);
+    let sum = 0;
+    do {
+      for (let i = 0; i < len; i++) {
+        startValues[i] = Math.random();
+      }
+      sum = startValues.reduce((acc, val) => acc + val, 0);
+      const scale = (rarity - len) / sum;
+      startValues = startValues.map((val) =>
+        Math.min(max, Math.round(val * scale) + 1)
+      );
+      sum = startValues.reduce((acc, val) => acc + val, 0);
+    } while (sum - rarity);
+    const values = startValues.map((value) => {
+      if (value === 10) {
+        return "A";
+      }
+      return value;
+    });
+    return values;
+  }, []);
+
+  const assignRandomValues = useCallback(
+    (array) => {
+      array.forEach((card) => {
+        if (Object.values(card).includes("common")) {
+          card.values = randomizeValues(common, MAX_VALUE);
+        } else if (Object.values(card).includes("uncommon")) {
+          card.values = randomizeValues(uncommon, MAX_VALUE);
+        } else if (Object.values(card).includes("rare")) {
+          card.values = randomizeValues(rare, MAX_VALUE);
+        } else if (Object.values(card).includes("epic")) {
+          card.values = randomizeValues(epic, MAX_VALUE);
+        } else if (Object.values(card).includes("legendary")) {
+          card.values = randomizeValues(legendary, MAX_VALUE);
+        }
+      });
+    },
+    [epic, legendary, common, uncommon, rare, randomizeValues]
+  );
 
   const dragStart = (e) => {
     setCardBeingDragged(e.target);
@@ -31,18 +91,16 @@ const DevEnv = () => {
 
     boardArray[cellBeingFilledId].empty = "false";
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
+    boardArray[cellBeingFilledId] = {
+      ...boardArray[cellBeingFilledId],
+      ...blueHand[cardBeingDraggedId],
+    };
     cardBeingDragged.innerHTML = "";
 
     console.log(boardArray);
-    console.log("cellBeingFilledId", cellBeingFilledId);
-    console.log("cardBeingDraggedId", cardBeingDraggedId);
-  };
 
-  const randomizeHand = (array) => {
-    for (let i = 0; i < DECKSIZE; i++) {
-      const randomIndex = Math.floor(Math.random() * cards.length);
-      array.push(Object.values(cards)[randomIndex]);
-    }
+    setCellBeingFilled(null);
+    setCardBeingDragged(null);
   };
 
   const createBoard = () => {
@@ -60,8 +118,12 @@ const DevEnv = () => {
     const blueHandArray = [];
     randomizeHand(redHandArray);
     randomizeHand(blueHandArray);
+    assignRandomValues(redHandArray);
+    assignRandomValues(blueHandArray);
     setRedHand(redHandArray);
     setBlueHand(blueHandArray);
+    console.log(redHandArray);
+    console.log(blueHandArray);
   };
 
   useEffect(() => {
@@ -78,16 +140,30 @@ const DevEnv = () => {
       </DevButton>
       <Table>
         <Hand>
-          {redHand.map((card) => (
+          {redHand.map((card, i) => (
             <RedCards
               key={card.number}
-              data-id={card.number}
+              data-id={i}
               draggable={true}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card" {...card} name={card.name}>
-                {card.number}
+              <Card
+                className="card"
+                {...card}
+                name={card.name}
+                style={{ backgroundColor: "red" }}
+              >
+                <CharImage
+                  src={`../images/cardImages/card${card.number}.png`}
+                  alt={card.name}
+                ></CharImage>
+                <Values>
+                  <Up>{card.values[0]}</Up>
+                  <Right>{card.values[1]}</Right>
+                  <Left>{card.values[2]}</Left>
+                  <Down>{card.values[3]}</Down>
+                </Values>
               </Card>
             </RedCards>
           ))}
@@ -105,16 +181,30 @@ const DevEnv = () => {
           ))}
         </Board>
         <Hand>
-          {blueHand.map((card) => (
+          {blueHand.map((card, i) => (
             <BlueCards
               key={card.number}
-              data-id={card.number}
+              data-id={i}
               draggable={true}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card" {...card} name={card.name}>
-                {card.number}
+              <Card
+                className="card"
+                {...card}
+                name={card.name}
+                style={{ backgroundColor: "blue" }}
+              >
+                <CharImage
+                  src={`../images/cardImages/card${card.number}.png`}
+                  alt={card.name}
+                ></CharImage>
+                <Values>
+                  <Up>{card.values[0]}</Up>
+                  <Right>{card.values[1]}</Right>
+                  <Left>{card.values[2]}</Left>
+                  <Down>{card.values[3]}</Down>
+                </Values>
               </Card>
             </BlueCards>
           ))}
@@ -200,8 +290,8 @@ const Table = styled.div`
 `;
 
 const Card = styled.div`
-  width: 11vw;
-  height: calc(11vw * 1.4);
+  width: 10vw;
+  height: 14vw;
   cursor: pointer;
   border-radius: 4px;
   border: 2px solid black;
@@ -211,20 +301,49 @@ const Card = styled.div`
 
 const Container = styled.div``;
 
-const RedCards = styled.div`
-  background-color: red;
+const RedCards = styled.div``;
+
+const BlueCards = styled.div``;
+
+const CharImage = styled.img`
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 8px;
+  border: 2px solid black;
 `;
 
-const BlueCards = styled.div`
-  background-color: blue;
+const Values = styled.div`
+  color: white;
+  font-weight: bold;
+  font-size: 1.25vw;
+  pointer-events: none;
+  z-index: 99;
+  position: absolute;
 `;
 
-// const CharImage = styled.img`
-//   width: 100%;
-//   height: 100%;
-//   pointer-events: none;
-//   border-radius: 8px;
-//   border: 2px solid black;
-// `;
+const Up = styled.span`
+  display: flex;
+  margin-top: 0.25vw;
+  margin-left: 7vw;
+`;
+
+const Right = styled.span`
+  display: flex;
+  margin-top: -0.75vw;
+  margin-left: 6vw;
+`;
+
+const Left = styled.span`
+  display: flex;
+  margin-top: -1.7vw;
+  margin-left: 8vw;
+`;
+
+const Down = styled.span`
+  display: flex;
+  margin-top: -0.75vw;
+  margin-left: 7vw;
+`;
 
 export default DevEnv;
