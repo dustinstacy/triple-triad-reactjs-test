@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import { cards } from "../card-data/card-data";
 
-const DECKSIZE = 5;
+const DECKSIZE = 1;
 
 const width = 3;
 
@@ -25,17 +25,15 @@ const DevEnv = () => {
 
   const dragEnd = () => {
     const cellBeingFilledId = parseInt(cellBeingFilled.getAttribute("data-id"));
-    const cardBeingDraggedId = parseInt(
-      cardBeingDragged.getAttribute("data-id")
-    );
 
     boardArray[cellBeingFilledId].empty = "false";
-    cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
-    cardBeingDragged.innerHTML = "";
+    boardArray[cellBeingFilledId] = cardBeingDragged;
+    cardBeingDragged.key = 1000000;
+
+    setBoardArray(boardArray);
 
     console.log(boardArray);
-    console.log("cellBeingFilledId", cellBeingFilledId);
-    console.log("cardBeingDraggedId", cardBeingDraggedId);
+    console.log("cellBeingFilledID", cellBeingFilledId);
   };
 
   const randomizeHand = (array) => {
@@ -79,44 +77,77 @@ const DevEnv = () => {
       <Table>
         <Hand>
           {redHand.map((card) => (
-            <RedCards
+            <Card
+              className="card"
               key={card.number}
               data-id={card.number}
+              name={card.name}
               draggable={true}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card" {...card} name={card.name}>
-                {card.number}
-              </Card>
-            </RedCards>
+              {card.number}
+            </Card>
           ))}
         </Hand>
         <Board>
-          {boardArray.map((_, i) => (
-            <Container key={i}>
+          {boardArray.map((cell, i) => {
+            return cell.empty === "true" ? (
               <Cell
+                key={i}
                 data-id={i}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={dragDrop}
                 onDragEnd={dragEnd}
-              ></Cell>
-            </Container>
-          ))}
+              >
+                {i}
+              </Cell>
+            ) : (
+              <Card
+                className="card"
+                key={i}
+                data-id={i.number}
+                name={i.name}
+                draggable={true}
+                onDragStart={dragStart}
+                onDragEnd={dragEnd}
+              >
+                {i.number}
+              </Card>
+            );
+          })}
+          {/* // else if (!isEmpty) {
+            //   boardArray.map((card) => (
+            //     <Card
+            //       className="card"
+            //       {...card}
+            //       key={card.number}
+            //       data-id={card.number}
+            //       name={card.name}
+            //       draggable={true}
+            //       onDragStart={dragStart}
+            //       onDragEnd={dragEnd}
+            //     >
+            //       {card.number}
+            //     </Card>
+            //   ));
+            // }
+          })} */}
         </Board>
         <Hand>
           {blueHand.map((card) => (
-            <BlueCards
+            <Card
+              className="card"
+              {...card}
               key={card.number}
               data-id={card.number}
+              name={card.name}
               draggable={true}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card" {...card} name={card.name}>
-                {card.number}
-              </Card>
-            </BlueCards>
+              {card.number}
+            </Card>
           ))}
         </Hand>
       </Table>
@@ -156,39 +187,38 @@ const Cell = styled.div`
 
 const Hand = styled.div`
   height: 100%;
-  width: 14vw;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
 
-  & > :nth-child(1) {
+  & > .card:nth-child(1) {
     z-index: 1;
     position: absolute;
   }
-
-  & > :nth-child(2) {
+  /*
+  & > .card:nth-child(2) {
     z-index: 2;
     position: absolute;
     margin-top: 8%;
   }
 
-  & > :nth-child(3) {
+  & > .card:nth-child(3) {
     z-index: 3;
     position: absolute;
     margin-top: 16%;
   }
 
-  & > :nth-child(4) {
+  & > .card:nth-child(4) {
     z-index: 4;
     position: absolute;
     margin-top: 24%;
   }
 
-  & > :nth-child(5) {
+  & > .card:nth-child(5) {
     z-index: 5;
     position: absolute;
     margin-top: 32%;
-  }
+  } */
 `;
 
 const Table = styled.div`
@@ -206,17 +236,8 @@ const Card = styled.div`
   border-radius: 4px;
   border: 2px solid black;
   display: flex;
+  align-items: center;
   justify-content: center;
-`;
-
-const Container = styled.div``;
-
-const RedCards = styled.div`
-  background-color: red;
-`;
-
-const BlueCards = styled.div`
-  background-color: blue;
 `;
 
 // const CharImage = styled.img`
