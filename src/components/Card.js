@@ -1,35 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Card = (card) => {
-  // const [isActive, setIsActive] = useState("false");
+  const [cardSelected, setCardSelected] = useState("false");
 
-  // function select(e) {
-  //   // get card clicked
-  //   let card = e.target;
-  //   // check if same card
-  //   if (card.dataset.selected === "true") {
-  //     // unselect card and return click to playable cards
-  //     card.dataset.selected = "false";
-  //   } else {
-  //     // select card and disable click to other playable cards
-  //     card.dataset.selected = "true";
-  //   }
-
-  //   setIsActive((current) => !current);
-
-  //   if (isActive) {
-  //     card.style.transform = "scale(1.3)";
-  //     card.style.zIndex = 1;
-  //   } else if (!isActive) {
-  //     card.style.transform = "scale(1)";
-  //     card.style.zIndex = 0;
-  //   }
-  //   console.log(card);
-  // }
+  const handleClick = (e) => {
+    const card = e.target;
+    setCardSelected((current) => !current);
+    if (cardSelected) {
+      card.style.transform = "scale(1.3)";
+    } else if (!cardSelected) {
+      card.style.transform = "scale(1)";
+    }
+    console.log(card);
+  };
 
   return (
-    <Container className="card" number={card.number} name={card.name}>
+    <Container
+      className="card"
+      number={card.number}
+      name={card.name}
+      onClick={handleClick}
+    >
       <CharImage
         src={`../images/cardImages/card${card.number}.png`}
         alt={card.name}

@@ -47,8 +47,7 @@ const StartMenu = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 2vw;
+  justify-content: space-around;
   border: 2px solid black;
   border-radius: 10%;
 `;
