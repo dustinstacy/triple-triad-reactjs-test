@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import { cards } from "../card-data/card-data";
 
-const DECKSIZE = 5;
+const DECK_SIZE = 10;
 const MAX_VALUE = 10;
 
 const width = 3;
@@ -15,6 +15,7 @@ const DevEnv = () => {
   const [blueHand, setBlueHand] = useState([]);
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
   const [cellBeingFilled, setCellBeingFilled] = useState(null);
+  const [isBlueTurn, setIsBlueTurn] = useState(true);
 
   const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -26,12 +27,33 @@ const DevEnv = () => {
   const epic = randomIntFromInterval(23, 27);
   const legendary = randomIntFromInterval(28, 32);
 
-  const randomizeHand = useCallback((array) => {
-    for (let i = 0; i < DECKSIZE; i++) {
-      const randomIndex = Math.floor(Math.random() * cards.length);
-      array.push(Object.values(cards)[randomIndex]);
+  function shuffleCards(cards) {
+    let i = cards.length,
+      temp,
+      rand;
+    while (i !== 0) {
+      rand = Math.floor(Math.random() * i);
+      i--;
+      temp = cards[i];
+      cards[i] = cards[rand];
+      cards[rand] = temp;
     }
-  }, []);
+    return cards;
+  }
+
+  function dealHands(blue, red) {
+    for (let card = 0; card < DECK_SIZE; card++) {
+      // if even, move to blue deck
+      if (card % 2 === 0) {
+        cards[card].owner = "blue";
+        blue.push(cards[card]);
+        // if odd, move to red deck
+      } else if (card % 2 !== 0) {
+        cards[card].owner = "red";
+        red.push(cards[card]);
+      }
+    }
+  }
 
   const randomizeValues = useCallback((rarity, max, len = 4) => {
     let startValues = new Array(len);
@@ -42,9 +64,7 @@ const DevEnv = () => {
       }
       sum = startValues.reduce((acc, val) => acc + val, 0);
       const scale = (rarity - len) / sum;
-      startValues = startValues.map((val) =>
-        Math.min(max, Math.round(val * scale) + 1)
-      );
+      startValues = startValues.map((val) => Math.min(max, Math.round(val * scale) + 1));
       sum = startValues.reduce((acc, val) => acc + val, 0);
     } while (sum - rarity);
     const values = startValues.map((value) => {
@@ -85,22 +105,73 @@ const DevEnv = () => {
 
   const dragEnd = () => {
     const cellBeingFilledId = parseInt(cellBeingFilled.getAttribute("data-id"));
-    const cardBeingDraggedId = parseInt(
-      cardBeingDragged.getAttribute("data-id")
-    );
+    const cardBeingDraggedId = parseInt(cardBeingDragged.getAttribute("data-id"));
+    const up = boardArray[cellBeingFilledId - width];
+    const right = boardArray[cellBeingFilledId + 1];
+    const left = boardArray[cellBeingFilledId - 1];
+    const down = boardArray[cellBeingFilledId + width];
 
     boardArray[cellBeingFilledId].empty = "false";
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
-    boardArray[cellBeingFilledId] = {
-      ...boardArray[cellBeingFilledId],
-      ...blueHand[cardBeingDraggedId],
-    };
+    console.log(cardBeingDragged);
+    if (isBlueTurn) {
+      boardArray[cellBeingFilledId] = {
+        ...boardArray[cellBeingFilledId],
+        ...blueHand[cardBeingDraggedId],
+      };
+    } else if (!isBlueTurn) {
+      boardArray[cellBeingFilledId] = {
+        ...boardArray[cellBeingFilledId],
+        ...redHand[cardBeingDraggedId],
+      };
+    }
+    console.log(cellBeingFilledId);
     cardBeingDragged.innerHTML = "";
+
+    if (cellBeingFilledId !== 0 && cellBeingFilledId !== 1 && cellBeingFilledId !== 2 && up.empty === "false") {
+      if (up.values[3] > boardArray[cellBeingFilledId].values[0]) {
+        console.log("you lose");
+      } else if (up.values[3] < boardArray[cellBeingFilledId].values[0]) {
+        console.log("you win");
+        up.owner = boardArray[cellBeingFilledId].owner;
+      } else if (up.values[3] === boardArray[cellBeingFilledId].values[0]) {
+        console.log("draw");
+      }
+    }
+    if (cellBeingFilledId !== 0 && cellBeingFilledId !== 3 && cellBeingFilledId !== 6 && left.empty === "false") {
+      if (left.values[2] > boardArray[cellBeingFilledId].values[1]) {
+        console.log("you lose");
+      } else if (left.values[2] < boardArray[cellBeingFilledId].values[1]) {
+        console.log("you win");
+      } else if (left.values[2] === boardArray[cellBeingFilledId].values[1]) {
+        console.log("draw");
+      }
+    }
+    if (cellBeingFilledId !== 2 && cellBeingFilledId !== 5 && cellBeingFilledId !== 8 && right.empty === "false") {
+      if (right.values[1] > boardArray[cellBeingFilledId].values[2]) {
+        console.log("you lose");
+      } else if (right.values[1] < boardArray[cellBeingFilledId].values[2]) {
+        console.log("you win");
+      } else if (right.values[1] === boardArray[cellBeingFilledId].values[2]) {
+        console.log("draw");
+      }
+    }
+    if (cellBeingFilledId !== 7 && cellBeingFilledId !== 8 && cellBeingFilledId !== 9 && down.empty === "false") {
+      if (down.values[0] > boardArray[cellBeingFilledId].values[3]) {
+        console.log("you lose");
+      } else if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
+        console.log("you win");
+      } else if (down.values[0] === boardArray[cellBeingFilledId].values[3]) {
+        console.log("draw");
+      }
+    }
 
     console.log(boardArray);
 
     setCellBeingFilled(null);
     setCardBeingDragged(null);
+    setIsBlueTurn((current) => !current);
+    setBoardArray(boardArray);
   };
 
   const createBoard = () => {
@@ -116,8 +187,8 @@ const DevEnv = () => {
   const createHands = () => {
     const redHandArray = [];
     const blueHandArray = [];
-    randomizeHand(redHandArray);
-    randomizeHand(blueHandArray);
+    shuffleCards(cards);
+    dealHands(blueHandArray, redHandArray);
     assignRandomValues(redHandArray);
     assignRandomValues(blueHandArray);
     setRedHand(redHandArray);
@@ -141,23 +212,9 @@ const DevEnv = () => {
       <Table>
         <Hand>
           {redHand.map((card, i) => (
-            <RedCards
-              key={card.number}
-              data-id={i}
-              draggable={true}
-              onDragStart={dragStart}
-              onDragEnd={dragEnd}
-            >
-              <Card
-                className="card"
-                {...card}
-                name={card.name}
-                style={{ backgroundColor: "red" }}
-              >
-                <CharImage
-                  src={`../images/cardImages/card${card.number}.png`}
-                  alt={card.name}
-                ></CharImage>
+            <RedCards key={card.number} data-id={i} draggable={true} onDragStart={dragStart} onDragEnd={dragEnd}>
+              <Card className="card" {...card} name={card.name} style={{ backgroundColor: card.owner }}>
+                <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
                 <Values>
                   <Up>{card.values[0]}</Up>
                   <Right>{card.values[1]}</Right>
@@ -171,34 +228,15 @@ const DevEnv = () => {
         <Board>
           {boardArray.map((_, i) => (
             <Container key={i}>
-              <Cell
-                data-id={i}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={dragDrop}
-                onDragEnd={dragEnd}
-              ></Cell>
+              <Cell data-id={i} onDragOver={(e) => e.preventDefault()} onDrop={dragDrop} onDragEnd={dragEnd}></Cell>
             </Container>
           ))}
         </Board>
         <Hand>
           {blueHand.map((card, i) => (
-            <BlueCards
-              key={card.number}
-              data-id={i}
-              draggable={true}
-              onDragStart={dragStart}
-              onDragEnd={dragEnd}
-            >
-              <Card
-                className="card"
-                {...card}
-                name={card.name}
-                style={{ backgroundColor: "blue" }}
-              >
-                <CharImage
-                  src={`../images/cardImages/card${card.number}.png`}
-                  alt={card.name}
-                ></CharImage>
+            <BlueCards key={card.number} data-id={i} draggable={true} onDragStart={dragStart} onDragEnd={dragEnd}>
+              <Card className="card" {...card} name={card.name} style={{ backgroundColor: card.owner }}>
+                <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
                 <Values>
                   <Up>{card.values[0]}</Up>
                   <Right>{card.values[1]}</Right>

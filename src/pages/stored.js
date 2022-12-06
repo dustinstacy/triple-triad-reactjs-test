@@ -41,6 +41,15 @@
 
 //   assignId();
 
+// const randomizeHand = useCallback((array) => {
+//   let newCardsArray = [...cards];
+//   for (let i = 0; i < DECKSIZE; i++) {
+//     const randomIndex = Math.floor(Math.random() * cards.length);
+//     array.push(Object.values(newCardsArray)[randomIndex]);
+//     newCardsArray.pop(newCardsArray[randomIndex]);
+//   }
+// }, []);
+
 //   const fillCellArray = () => {
 //     for (let i = 0; i < CELL_COUNT; i++) {
 //       cellArray.push(
