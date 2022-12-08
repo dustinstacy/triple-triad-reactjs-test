@@ -4,10 +4,11 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import { cards } from "../card-data/card-data";
 
-const DECK_SIZE = 10;
 const MAX_VALUE = 10;
 
+// customizable options?
 const width = 3;
+const deckSize = 10;
 
 const DevEnv = () => {
   const [boardArray, setBoardArray] = useState([]);
@@ -16,6 +17,10 @@ const DevEnv = () => {
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
   const [cellBeingFilled, setCellBeingFilled] = useState(null);
   const [isBlueTurn, setIsBlueTurn] = useState(true);
+  const [blueScore, setBlueScore] = useState(5);
+  const [redScore, setRedScore] = useState(5);
+
+  const table = [...blueHand, ...redHand, ...boardArray];
 
   const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -42,7 +47,7 @@ const DevEnv = () => {
   }
 
   function dealHands(blue, red) {
-    for (let card = 0; card < DECK_SIZE; card++) {
+    for (let card = 0; card < deckSize; card++) {
       // if even, move to blue deck
       if (card % 2 === 0) {
         cards[card].owner = "blue";
@@ -106,14 +111,19 @@ const DevEnv = () => {
   const dragEnd = () => {
     const cellBeingFilledId = parseInt(cellBeingFilled.getAttribute("data-id"));
     const cardBeingDraggedId = parseInt(cardBeingDragged.getAttribute("data-id"));
+
     const up = boardArray[cellBeingFilledId - width];
     const right = boardArray[cellBeingFilledId + 1];
     const left = boardArray[cellBeingFilledId - 1];
     const down = boardArray[cellBeingFilledId + width];
 
+    let redScoreCounter = 0;
+    let blueScoreCounter = 0;
+
     boardArray[cellBeingFilledId].empty = "false";
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
-    console.log(cardBeingDragged);
+    cardBeingDragged.innerHTML = "";
+
     if (isBlueTurn) {
       boardArray[cellBeingFilledId] = {
         ...boardArray[cellBeingFilledId],
@@ -125,8 +135,6 @@ const DevEnv = () => {
         ...redHand[cardBeingDraggedId],
       };
     }
-    console.log(cellBeingFilledId);
-    cardBeingDragged.innerHTML = "";
 
     if (cellBeingFilledId !== 0 && cellBeingFilledId !== 1 && cellBeingFilledId !== 2 && up.empty === "false") {
       if (up.values[3] > boardArray[cellBeingFilledId].values[0]) {
@@ -143,6 +151,7 @@ const DevEnv = () => {
         console.log("you lose");
       } else if (left.values[2] < boardArray[cellBeingFilledId].values[1]) {
         console.log("you win");
+        left.owner = boardArray[cellBeingFilledId].owner;
       } else if (left.values[2] === boardArray[cellBeingFilledId].values[1]) {
         console.log("draw");
       }
@@ -152,6 +161,7 @@ const DevEnv = () => {
         console.log("you lose");
       } else if (right.values[1] < boardArray[cellBeingFilledId].values[2]) {
         console.log("you win");
+        right.owner = boardArray[cellBeingFilledId].owner;
       } else if (right.values[1] === boardArray[cellBeingFilledId].values[2]) {
         console.log("draw");
       }
@@ -161,17 +171,35 @@ const DevEnv = () => {
         console.log("you lose");
       } else if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
         console.log("you win");
+        down.owner = boardArray[cellBeingFilledId].owner;
       } else if (down.values[0] === boardArray[cellBeingFilledId].values[3]) {
         console.log("draw");
       }
     }
 
-    console.log(boardArray);
+    if (isBlueTurn) {
+      blueHand.splice([cardBeingDraggedId], 1);
+    } else if (!isBlueTurn) {
+      redHand.splice([cardBeingDraggedId], 1);
+    }
 
     setCellBeingFilled(null);
     setCardBeingDragged(null);
     setIsBlueTurn((current) => !current);
     setBoardArray(boardArray);
+    console.log(table);
+
+    table.forEach((card) => {
+      if (card.owner === "blue") {
+        blueScoreCounter++;
+      }
+      if (card.owner === "red") {
+        redScoreCounter++;
+      }
+    });
+
+    setBlueScore(blueScoreCounter);
+    setRedScore(redScoreCounter);
   };
 
   const createBoard = () => {
@@ -193,8 +221,6 @@ const DevEnv = () => {
     assignRandomValues(blueHandArray);
     setRedHand(redHandArray);
     setBlueHand(blueHandArray);
-    console.log(redHandArray);
-    console.log(blueHandArray);
   };
 
   useEffect(() => {
@@ -210,10 +236,17 @@ const DevEnv = () => {
         </Link>
       </DevButton>
       <Table>
+        <TurnmarkerRed>{isBlueTurn ? "" : "-->"}</TurnmarkerRed>
         <Hand>
           {redHand.map((card, i) => (
-            <RedCards key={card.number} data-id={i} draggable={true} onDragStart={dragStart} onDragEnd={dragEnd}>
-              <Card className="card" {...card} name={card.name} style={{ backgroundColor: card.owner }}>
+            <RedCards
+              key={card.number}
+              data-id={i}
+              draggable={isBlueTurn ? false : true}
+              onDragStart={dragStart}
+              onDragEnd={dragEnd}
+            >
+              <Card className="card red" {...card} name={card.name} owner={card.owner}>
                 <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
                 <Values>
                   <Up>{card.values[0]}</Up>
@@ -225,17 +258,32 @@ const DevEnv = () => {
             </RedCards>
           ))}
         </Hand>
+        <ScoreRed>{redScore}</ScoreRed>
         <Board>
           {boardArray.map((_, i) => (
             <Container key={i}>
-              <Cell data-id={i} onDragOver={(e) => e.preventDefault()} onDrop={dragDrop} onDragEnd={dragEnd}></Cell>
+              <Cell
+                {..._}
+                data-id={i}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={dragDrop}
+                onDragEnd={dragEnd}
+                style={{ backgroundColor: _.owner }}
+              ></Cell>
             </Container>
           ))}
         </Board>
+        <ScoreBlue>{parseInt(blueScore)}</ScoreBlue>
         <Hand>
           {blueHand.map((card, i) => (
-            <BlueCards key={card.number} data-id={i} draggable={true} onDragStart={dragStart} onDragEnd={dragEnd}>
-              <Card className="card" {...card} name={card.name} style={{ backgroundColor: card.owner }}>
+            <BlueCards
+              key={card.number}
+              data-id={i}
+              draggable={isBlueTurn ? true : false}
+              onDragStart={dragStart}
+              onDragEnd={dragEnd}
+            >
+              <Card className="card blue" {...card} name={card.name} owner={card.owner}>
                 <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
                 <Values>
                   <Up>{card.values[0]}</Up>
@@ -247,6 +295,7 @@ const DevEnv = () => {
             </BlueCards>
           ))}
         </Hand>
+        <TurnmarkerBlue>{isBlueTurn ? "<--" : ""}</TurnmarkerBlue>
       </Table>
     </DevLayout>
   );
@@ -265,21 +314,26 @@ const DevLayout = styled.div`
 const DevButton = styled.div``;
 
 const Board = styled.div`
-  width: 32vw;
-  height: 43.8vw;
+  width: 33vw;
+  height: 45.2vw;
   display: flex;
   flex-wrap: wrap;
   align-content: center;
+  align-items: center;
   justify-content: center;
 `;
 
 const Cell = styled.div`
-  width: 10vw;
-  height: 14vw;
+  width: 10.5vw;
+  height: 14.7vw;
   border: 2px dotted black;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  > * {
+    margin-top: -3%;
+  }
 `;
 
 const Hand = styled.div`
@@ -331,24 +385,36 @@ const Card = styled.div`
   width: 10vw;
   height: 14vw;
   cursor: pointer;
-  border-radius: 4px;
   border: 2px solid black;
   display: flex;
   justify-content: center;
+
+  &.red {
+    background-color: red;
+  }
 `;
 
 const Container = styled.div``;
 
-const RedCards = styled.div``;
+const RedCards = styled.div`
+  & > .card {
+    background-color: red;
+  }
+`;
 
-const BlueCards = styled.div``;
+const BlueCards = styled.div`
+  & > .card {
+    background-color: blue;
+  }
+`;
 
 const CharImage = styled.img`
-  width: 100%;
-  height: 100%;
+  width: 105%;
+  height: 105%;
   pointer-events: none;
   border-radius: 8px;
   border: 2px solid black;
+  margin-top: -2.5%;
 `;
 
 const Values = styled.div`
@@ -382,6 +448,48 @@ const Down = styled.span`
   display: flex;
   margin-top: -0.75vw;
   margin-left: 7vw;
+`;
+
+const TurnmarkerBlue = styled.div`
+  display: flex;
+  align-self: center;
+  width: 6vw;
+  font-size: 4vw;
+  color: blue;
+  margin-left: -13vw;
+  margin-right: -5vw;
+  margin-top: -7vw;
+`;
+
+const TurnmarkerRed = styled.div`
+  display: flex;
+  align-self: center;
+  width: 6vw;
+  font-size: 4vw;
+  color: red;
+  margin-right: -13vw;
+  margin-left: -5vw;
+  margin-top: -7vw;
+`;
+
+const ScoreBlue = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 4vw;
+  font-size: 3vw;
+  color: blue;
+  margin-left: -6vw;
+  margin-right: -10vw;
+`;
+
+const ScoreRed = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 4vw;
+  font-size: 3vw;
+  color: red;
+  margin-right: -6vw;
+  margin-left: -10vw;
 `;
 
 export default DevEnv;
