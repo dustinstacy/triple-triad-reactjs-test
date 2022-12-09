@@ -166,7 +166,7 @@ const DevEnv = () => {
         console.log("draw");
       }
     }
-    if (cellBeingFilledId !== 7 && cellBeingFilledId !== 8 && cellBeingFilledId !== 9 && down.empty === "false") {
+    if (cellBeingFilledId !== 6 && cellBeingFilledId !== 7 && cellBeingFilledId !== 8 && down.empty === "false") {
       if (down.values[0] > boardArray[cellBeingFilledId].values[3]) {
         console.log("you lose");
       } else if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
@@ -313,6 +313,10 @@ const DevLayout = styled.div`
 
 const DevButton = styled.div``;
 
+/**
+ * BUTT STUFF :)
+ */
+
 const Board = styled.div`
   width: 33vw;
   height: 45.2vw;
@@ -388,10 +392,6 @@ const Card = styled.div`
   border: 2px solid black;
   display: flex;
   justify-content: center;
-
-  &.red {
-    background-color: red;
-  }
 `;
 
 const Container = styled.div``;
