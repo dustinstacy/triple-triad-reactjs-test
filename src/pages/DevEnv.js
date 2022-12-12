@@ -205,7 +205,6 @@ const DevEnv = () => {
   const createBoard = () => {
     const emptyCellArray = [];
     for (let i = 0; i < width * width; i++) {
-      // const emptyCell = { state: isEmpty };
       const emptyCell = { empty: "true" };
       emptyCellArray.push(emptyCell);
     }
