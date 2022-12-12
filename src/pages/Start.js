@@ -14,7 +14,10 @@ export default function Start() {
           <Link to="./Setup">
             <Button label={"New Game"} />
           </Link>
-          <Link to="DevEnv">
+          <Link to="./CardLibrary">
+            <Button label={"Card Library"} />
+          </Link>
+          <Link to="./DevEnv">
             <Button label={"Dev page"} />
           </Link>
         </StartMenu>
