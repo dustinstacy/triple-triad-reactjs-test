@@ -1,33 +1,24 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState } from "react";
+import { useCards, CardsProvider } from "./store";
 
-const CardContext = createContext({});
-
-function useCardSource(user) {
-  const [ownedCards, setOwnedCards] = useState([]);
-
-  useEffect(() => {
-    if (user !== null) {
-      fetch(`/${user.id}.json`)
-        .then((response) => response.json())
-        .then((data) => setOwnedCards(data));
-    } else {
-      fetch(`/demo.json`)
-        .then((response) => response.json())
-        .then((data) => setOwnedCards(data));
-    }
-  }, [user]);
-
-  return { ownedCards };
+function SearchBox() {
+  const { search, setSearch } = useCards();
+  return <input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />;
 }
 
 const CardList = () => {
-  const { cards } = useContext(CardContext);
+  const { cards } = useCards();
   return (
-    <div>
+    <ul>
       {cards.map((card) => (
-        <div key={card.id}>{card.name}</div>
+        <li key={card.id}>
+          <div>
+            <img src={``} alt="" />
+            <h3>{card.name}</h3>
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 
@@ -35,9 +26,10 @@ function App() {
   const [user, setUser] = useState(null);
 
   return (
-    <CardContext.Provider value={useCardSource(user)}>
+    <CardsProvider>
+      <SearchBox />
       <CardList />
-    </CardContext.Provider>
+    </CardsProvider>
   );
 }
 
