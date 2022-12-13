@@ -1,90 +1,68 @@
-import React, { forwardRef, useImperativeHandle } from "react";
 import styled from "styled-components";
 
-const Card = forwardRef((card, ref) => {
-  // const [cardBeingDragged, setCardBeingDragged] = useState(null);
-
-  // const handleClick = (e) => {
-  //   const card = e.target;
-  //   setCardSelected((current) => !current);
-  //   if (cardSelected) {
-  //     card.style.transform = "scale(1.3)";
-  //   } else if (!cardSelected) {
-  //     card.style.transform = "scale(1)";
-  //   }
-  //   console.log(card);
-  // };
-
-  // useImperativeHandle(ref, () => ({
-  //   dragStart(e) {
-  //     console.log("drag start");
-  //     console.log(e.target);
-  //     alert("Child function called");
-  //   },
-  // }));
-  // };
-
+const Card = (card) => {
   return (
-    <Container className="card" data-id={card.number} name={card.name}>
-      <CharImage
-        src={`../images/cardImages/card${card.number}.png`}
-        alt={card.name}
-      ></CharImage>
+    <CardContainer className="card" name={card.name}>
+      <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
       <Values>
         <Up>{card.values[0]}</Up>
         <Right>{card.values[1]}</Right>
         <Left>{card.values[2]}</Left>
         <Down>{card.values[3]}</Down>
       </Values>
-    </Container>
+    </CardContainer>
   );
-});
+};
 
-const Container = styled.div`
-  width: 11vw;
-  height: calc(11vw * 1.4);
+const CardContainer = styled.div`
+  width: 10vw;
+  height: 14vw;
   cursor: pointer;
-  border-radius: 4px;
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
 `;
 
 const CharImage = styled.img`
-  width: 100%;
-  height: 100%;
+  width: 105%;
+  height: 105%;
   pointer-events: none;
   border-radius: 8px;
   border: 2px solid black;
+  margin-top: -2.5%;
 `;
 
 const Values = styled.div`
-  color: rgb(249, 249, 249, 0.8);
+  color: white;
   font-weight: bold;
   font-size: 1.25vw;
   pointer-events: none;
   z-index: 99;
+  position: absolute;
 `;
 
 const Up = styled.span`
   display: flex;
-  margin-top: -15.25vw;
-  margin-left: 8.5vw;
+  margin-top: 0.25vw;
+  margin-left: 7vw;
 `;
 
 const Right = styled.span`
   display: flex;
-  margin-top: -0.7vw;
-  margin-left: 9.5vw;
+  margin-top: -0.75vw;
+  margin-left: 6vw;
 `;
 
 const Left = styled.span`
   display: flex;
   margin-top: -1.7vw;
-  margin-left: 7.5vw;
+  margin-left: 8vw;
 `;
 
 const Down = styled.span`
   display: flex;
-  margin-top: -0.7vw;
-  margin-left: 8.5vw;
+  margin-top: -0.75vw;
+  margin-left: 7vw;
 `;
 
 export default Card;
