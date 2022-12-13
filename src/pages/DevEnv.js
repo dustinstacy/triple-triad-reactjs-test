@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
+import Card from "../components/Card";
 import { cards } from "../card-data/card-data";
 
 const MAX_VALUE = 10;
@@ -16,7 +17,7 @@ const DevEnv = () => {
   const [blueHand, setBlueHand] = useState([]);
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
   const [cellBeingFilled, setCellBeingFilled] = useState(null);
-  const [isBlueTurn, setIsBlueTurn] = useState(true);
+  const [isP1Turn, setisP1Turn] = useState(true);
   const [blueScore, setBlueScore] = useState(5);
   const [redScore, setRedScore] = useState(5);
 
@@ -124,15 +125,15 @@ const DevEnv = () => {
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
     cardBeingDragged.innerHTML = "";
 
-    if (isBlueTurn) {
-      boardArray[cellBeingFilledId] = {
-        ...boardArray[cellBeingFilledId],
-        ...blueHand[cardBeingDraggedId],
-      };
-    } else if (!isBlueTurn) {
+    if (isP1Turn) {
       boardArray[cellBeingFilledId] = {
         ...boardArray[cellBeingFilledId],
         ...redHand[cardBeingDraggedId],
+      };
+    } else if (!isP1Turn) {
+      boardArray[cellBeingFilledId] = {
+        ...boardArray[cellBeingFilledId],
+        ...blueHand[cardBeingDraggedId],
       };
     }
 
@@ -177,15 +178,15 @@ const DevEnv = () => {
       }
     }
 
-    if (isBlueTurn) {
-      blueHand.splice([cardBeingDraggedId], 1);
-    } else if (!isBlueTurn) {
+    if (isP1Turn) {
       redHand.splice([cardBeingDraggedId], 1);
+    } else if (!isP1Turn) {
+      blueHand.splice([cardBeingDraggedId], 1);
     }
 
     setCellBeingFilled(null);
     setCardBeingDragged(null);
-    setIsBlueTurn((current) => !current);
+    setisP1Turn((current) => !current);
     setBoardArray(boardArray);
     console.log(table);
 
@@ -202,16 +203,16 @@ const DevEnv = () => {
     setRedScore(redScoreCounter);
   };
 
-  const createBoard = () => {
+  const createBoard = useCallback(() => {
     const emptyCellArray = [];
     for (let i = 0; i < width * width; i++) {
       const emptyCell = { empty: "true" };
       emptyCellArray.push(emptyCell);
     }
     setBoardArray(emptyCellArray);
-  };
+  }, []);
 
-  const createHands = () => {
+  const createHands = useCallback(() => {
     const redHandArray = [];
     const blueHandArray = [];
     shuffleCards(cards);
@@ -220,12 +221,12 @@ const DevEnv = () => {
     assignRandomValues(blueHandArray);
     setRedHand(redHandArray);
     setBlueHand(blueHandArray);
-  };
+  }, []);
 
   useEffect(() => {
     createBoard();
     createHands();
-  }, []);
+  }, [createBoard, createHands]);
 
   return (
     <DevLayout>
@@ -235,26 +236,18 @@ const DevEnv = () => {
         </Link>
       </DevButton>
       <Table>
-        <TurnmarkerRed>{isBlueTurn ? "" : "-->"}</TurnmarkerRed>
+        <TurnmarkerRed>{isP1Turn ? "-->" : ""}</TurnmarkerRed>
         <Hand>
           {redHand.map((card, i) => (
-            <RedCards
+            <P1Cards
               key={card.number}
               data-id={i}
-              draggable={isBlueTurn ? false : true}
+              draggable={isP1Turn ? true : false}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card red" {...card} name={card.name} owner={card.owner}>
-                <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
-                <Values>
-                  <Up>{card.values[0]}</Up>
-                  <Right>{card.values[1]}</Right>
-                  <Left>{card.values[2]}</Left>
-                  <Down>{card.values[3]}</Down>
-                </Values>
-              </Card>
-            </RedCards>
+              <Card className="card" {...card} name={card.name} owner={card.owner}></Card>
+            </P1Cards>
           ))}
         </Hand>
         <ScoreRed>{redScore}</ScoreRed>
@@ -262,7 +255,6 @@ const DevEnv = () => {
           {boardArray.map((_, i) => (
             <Container key={i}>
               <Cell
-                {..._}
                 data-id={i}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={dragDrop}
@@ -275,26 +267,18 @@ const DevEnv = () => {
         <ScoreBlue>{parseInt(blueScore)}</ScoreBlue>
         <Hand>
           {blueHand.map((card, i) => (
-            <BlueCards
+            <P2Cards
               key={card.number}
               data-id={i}
-              draggable={isBlueTurn ? true : false}
+              draggable={isP1Turn ? false : true}
               onDragStart={dragStart}
               onDragEnd={dragEnd}
             >
-              <Card className="card blue" {...card} name={card.name} owner={card.owner}>
-                <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
-                <Values>
-                  <Up>{card.values[0]}</Up>
-                  <Right>{card.values[1]}</Right>
-                  <Left>{card.values[2]}</Left>
-                  <Down>{card.values[3]}</Down>
-                </Values>
-              </Card>
-            </BlueCards>
+              <Card {...card} owner={card.owner}></Card>
+            </P2Cards>
           ))}
         </Hand>
-        <TurnmarkerBlue>{isBlueTurn ? "<--" : ""}</TurnmarkerBlue>
+        <TurnmarkerBlue>{isP1Turn ? "" : "<--"}</TurnmarkerBlue>
       </Table>
     </DevLayout>
   );
@@ -384,69 +368,18 @@ const Table = styled.div`
   justify-content: space-around;
 `;
 
-const Card = styled.div`
-  width: 10vw;
-  height: 14vw;
-  cursor: pointer;
-  border: 2px solid black;
-  display: flex;
-  justify-content: center;
-`;
-
 const Container = styled.div``;
 
-const RedCards = styled.div`
-  & > .card {
-    background-color: red;
-  }
-`;
-
-const BlueCards = styled.div`
+const P2Cards = styled.div`
   & > .card {
     background-color: blue;
   }
 `;
 
-const CharImage = styled.img`
-  width: 105%;
-  height: 105%;
-  pointer-events: none;
-  border-radius: 8px;
-  border: 2px solid black;
-  margin-top: -2.5%;
-`;
-
-const Values = styled.div`
-  color: white;
-  font-weight: bold;
-  font-size: 1.25vw;
-  pointer-events: none;
-  z-index: 99;
-  position: absolute;
-`;
-
-const Up = styled.span`
-  display: flex;
-  margin-top: 0.25vw;
-  margin-left: 7vw;
-`;
-
-const Right = styled.span`
-  display: flex;
-  margin-top: -0.75vw;
-  margin-left: 6vw;
-`;
-
-const Left = styled.span`
-  display: flex;
-  margin-top: -1.7vw;
-  margin-left: 8vw;
-`;
-
-const Down = styled.span`
-  display: flex;
-  margin-top: -0.75vw;
-  margin-left: 7vw;
+const P1Cards = styled.div`
+  & > .card {
+    background-color: red;
+  }
 `;
 
 const TurnmarkerBlue = styled.div`
