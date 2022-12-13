@@ -12,8 +12,6 @@ function useCardsSource() {
     initialData: [],
   });
 
-  console.log(cards);
-
   const [{ search }, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
