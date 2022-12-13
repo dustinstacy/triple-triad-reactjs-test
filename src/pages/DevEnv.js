@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import { cards } from "../card-data/card-data";
+import { useP1Cards, useP2Cards, OwnedCardsProvider } from "../context/OwnedCardsContext";
+
+const queryClient = new QueryClient();
 
 const MAX_VALUE = 10;
 
@@ -11,17 +15,28 @@ const MAX_VALUE = 10;
 const width = 3;
 const deckSize = 10;
 
+const Deck = () => {
+  const [p1Deck, setP1Deck] = useState([]);
+  const [p2Deck, setP2Deck] = useState([]);
+
+  // const p1Cards = useP1Cards();
+  const p2Cards = useP2Cards();
+
+  // console.log(p1Cards);
+  console.log(p2Cards);
+};
+
 const DevEnv = () => {
   const [boardArray, setBoardArray] = useState([]);
-  const [redHand, setRedHand] = useState([]);
-  const [blueHand, setBlueHand] = useState([]);
+  const [p1Hand, setP1Hand] = useState([]);
+  const [p2Hand, setP2Hand] = useState([]);
   const [cardBeingDragged, setCardBeingDragged] = useState(null);
   const [cellBeingFilled, setCellBeingFilled] = useState(null);
   const [isP1Turn, setisP1Turn] = useState(true);
-  const [blueScore, setBlueScore] = useState(5);
-  const [redScore, setRedScore] = useState(5);
+  const [p1Score, setP1Score] = useState(5);
+  const [p2Score, setP2Score] = useState(5);
 
-  const table = [...blueHand, ...redHand, ...boardArray];
+  const table = [...p1Hand, ...boardArray, ...p2Hand];
 
   const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -33,7 +48,7 @@ const DevEnv = () => {
   const epic = randomIntFromInterval(23, 27);
   const legendary = randomIntFromInterval(28, 32);
 
-  function shuffleCards(cards) {
+  const shuffleCards = useCallback((cards) => {
     let i = cards.length,
       temp,
       rand;
@@ -45,21 +60,21 @@ const DevEnv = () => {
       cards[rand] = temp;
     }
     return cards;
-  }
+  }, []);
 
-  function dealHands(blue, red) {
+  const dealHands = useCallback((p1, p2) => {
     for (let card = 0; card < deckSize; card++) {
-      // if even, move to blue deck
+      // if even, move to p1 deck
       if (card % 2 === 0) {
-        cards[card].owner = "blue";
-        blue.push(cards[card]);
-        // if odd, move to red deck
-      } else if (card % 2 !== 0) {
         cards[card].owner = "red";
-        red.push(cards[card]);
+        p1.push(cards[card]);
+        // if odd, move to p2 deck
+      } else if (card % 2 !== 0) {
+        cards[card].owner = "blue";
+        p2.push(cards[card]);
       }
     }
-  }
+  }, []);
 
   const randomizeValues = useCallback((rarity, max, len = 4) => {
     let startValues = new Array(len);
@@ -118,8 +133,8 @@ const DevEnv = () => {
     const left = boardArray[cellBeingFilledId - 1];
     const down = boardArray[cellBeingFilledId + width];
 
-    let redScoreCounter = 0;
-    let blueScoreCounter = 0;
+    let p1ScoreCounter = 0;
+    let p2ScoreCounter = 0;
 
     boardArray[cellBeingFilledId].empty = "false";
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
@@ -128,79 +143,58 @@ const DevEnv = () => {
     if (isP1Turn) {
       boardArray[cellBeingFilledId] = {
         ...boardArray[cellBeingFilledId],
-        ...redHand[cardBeingDraggedId],
+        ...p1Hand[cardBeingDraggedId],
       };
     } else if (!isP1Turn) {
       boardArray[cellBeingFilledId] = {
         ...boardArray[cellBeingFilledId],
-        ...blueHand[cardBeingDraggedId],
+        ...p2Hand[cardBeingDraggedId],
       };
     }
 
     if (cellBeingFilledId !== 0 && cellBeingFilledId !== 1 && cellBeingFilledId !== 2 && up.empty === "false") {
-      if (up.values[3] > boardArray[cellBeingFilledId].values[0]) {
-        console.log("you lose");
-      } else if (up.values[3] < boardArray[cellBeingFilledId].values[0]) {
-        console.log("you win");
+      if (up.values[3] < boardArray[cellBeingFilledId].values[0]) {
         up.owner = boardArray[cellBeingFilledId].owner;
-      } else if (up.values[3] === boardArray[cellBeingFilledId].values[0]) {
-        console.log("draw");
       }
     }
     if (cellBeingFilledId !== 0 && cellBeingFilledId !== 3 && cellBeingFilledId !== 6 && left.empty === "false") {
-      if (left.values[2] > boardArray[cellBeingFilledId].values[1]) {
-        console.log("you lose");
-      } else if (left.values[2] < boardArray[cellBeingFilledId].values[1]) {
-        console.log("you win");
+      if (left.values[2] < boardArray[cellBeingFilledId].values[1]) {
         left.owner = boardArray[cellBeingFilledId].owner;
-      } else if (left.values[2] === boardArray[cellBeingFilledId].values[1]) {
-        console.log("draw");
       }
     }
     if (cellBeingFilledId !== 2 && cellBeingFilledId !== 5 && cellBeingFilledId !== 8 && right.empty === "false") {
-      if (right.values[1] > boardArray[cellBeingFilledId].values[2]) {
-        console.log("you lose");
-      } else if (right.values[1] < boardArray[cellBeingFilledId].values[2]) {
-        console.log("you win");
+      if (right.values[1] < boardArray[cellBeingFilledId].values[2]) {
         right.owner = boardArray[cellBeingFilledId].owner;
-      } else if (right.values[1] === boardArray[cellBeingFilledId].values[2]) {
-        console.log("draw");
       }
     }
     if (cellBeingFilledId !== 6 && cellBeingFilledId !== 7 && cellBeingFilledId !== 8 && down.empty === "false") {
-      if (down.values[0] > boardArray[cellBeingFilledId].values[3]) {
-        console.log("you lose");
-      } else if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
-        console.log("you win");
+      if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
         down.owner = boardArray[cellBeingFilledId].owner;
-      } else if (down.values[0] === boardArray[cellBeingFilledId].values[3]) {
-        console.log("draw");
       }
     }
 
     if (isP1Turn) {
-      redHand.splice([cardBeingDraggedId], 1);
+      p1Hand.splice([cardBeingDraggedId], 1);
     } else if (!isP1Turn) {
-      blueHand.splice([cardBeingDraggedId], 1);
+      p2Hand.splice([cardBeingDraggedId], 1);
     }
 
     setCellBeingFilled(null);
     setCardBeingDragged(null);
     setisP1Turn((current) => !current);
     setBoardArray(boardArray);
-    console.log(table);
 
     table.forEach((card) => {
       if (card.owner === "blue") {
-        blueScoreCounter++;
+        p2ScoreCounter++;
       }
       if (card.owner === "red") {
-        redScoreCounter++;
+        p1ScoreCounter++;
       }
     });
 
-    setBlueScore(blueScoreCounter);
-    setRedScore(redScoreCounter);
+    setP2Score(p2ScoreCounter);
+    setP1Score(p1ScoreCounter);
   };
 
   const createBoard = useCallback(() => {
@@ -213,14 +207,14 @@ const DevEnv = () => {
   }, []);
 
   const createHands = useCallback(() => {
-    const redHandArray = [];
-    const blueHandArray = [];
+    const p1HandArray = [];
+    const p2HandArray = [];
     shuffleCards(cards);
-    dealHands(blueHandArray, redHandArray);
-    assignRandomValues(redHandArray);
-    assignRandomValues(blueHandArray);
-    setRedHand(redHandArray);
-    setBlueHand(blueHandArray);
+    dealHands(p1HandArray, p2HandArray);
+    assignRandomValues(p1HandArray);
+    assignRandomValues(p2HandArray);
+    setP1Hand(p1HandArray);
+    setP2Hand(p2HandArray);
   }, []);
 
   useEffect(() => {
@@ -229,58 +223,60 @@ const DevEnv = () => {
   }, [createBoard, createHands]);
 
   return (
-    <DevLayout>
-      <DevButton>
-        <Link to="/">
-          <Button label="Main Menu" />
-        </Link>
-      </DevButton>
-      <Table>
-        <TurnmarkerRed>{isP1Turn ? "-->" : ""}</TurnmarkerRed>
-        <Hand>
-          {redHand.map((card, i) => (
-            <P1Cards
-              key={card.number}
-              data-id={i}
-              draggable={isP1Turn ? true : false}
-              onDragStart={dragStart}
-              onDragEnd={dragEnd}
-            >
-              <Card className="card" {...card} name={card.name} owner={card.owner}></Card>
-            </P1Cards>
-          ))}
-        </Hand>
-        <ScoreRed>{redScore}</ScoreRed>
-        <Board>
-          {boardArray.map((_, i) => (
-            <Container key={i}>
-              <Cell
-                data-id={i}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={dragDrop}
-                onDragEnd={dragEnd}
-                style={{ backgroundColor: _.owner }}
-              ></Cell>
-            </Container>
-          ))}
-        </Board>
-        <ScoreBlue>{parseInt(blueScore)}</ScoreBlue>
-        <Hand>
-          {blueHand.map((card, i) => (
-            <P2Cards
-              key={card.number}
-              data-id={i}
-              draggable={isP1Turn ? false : true}
-              onDragStart={dragStart}
-              onDragEnd={dragEnd}
-            >
-              <Card {...card} owner={card.owner}></Card>
-            </P2Cards>
-          ))}
-        </Hand>
-        <TurnmarkerBlue>{isP1Turn ? "" : "<--"}</TurnmarkerBlue>
-      </Table>
-    </DevLayout>
+    <QueryClientProvider client={queryClient}>
+      <OwnedCardsProvider>
+        <DevLayout>
+          <Deck />
+          <Link to="/">
+            <Button label="Main Menu" />
+          </Link>
+          <Table>
+            <P1TurnMarker>{isP1Turn ? "-->" : ""}</P1TurnMarker>
+            <Hand>
+              {p1Hand.map((card, i) => (
+                <P1Cards
+                  key={card.number}
+                  data-id={i}
+                  draggable={isP1Turn ? true : false}
+                  onDragStart={dragStart}
+                  onDragEnd={dragEnd}
+                >
+                  <Card {...card} owner={card.owner}></Card>
+                </P1Cards>
+              ))}
+            </Hand>
+            <P1Score>{p1Score}</P1Score>
+            <Board>
+              {boardArray.map((_, i) => (
+                <Cell
+                  key={i}
+                  data-id={i}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={dragDrop}
+                  onDragEnd={dragEnd}
+                  style={{ backgroundColor: _.owner }}
+                ></Cell>
+              ))}
+            </Board>
+            <P2Score>{parseInt(p2Score)}</P2Score>
+            <Hand>
+              {p2Hand.map((card, i) => (
+                <P2Cards
+                  key={card.number}
+                  data-id={i}
+                  draggable={isP1Turn ? false : true}
+                  onDragStart={dragStart}
+                  onDragEnd={dragEnd}
+                >
+                  <Card {...card} owner={card.owner}></Card>
+                </P2Cards>
+              ))}
+            </Hand>
+            <P2TurnMarker>{isP1Turn ? "" : "<--"}</P2TurnMarker>
+          </Table>
+        </DevLayout>
+      </OwnedCardsProvider>
+    </QueryClientProvider>
   );
 };
 
@@ -293,12 +289,6 @@ const DevLayout = styled.div`
   justify-content: space-around;
   align-items: center;
 `;
-
-const DevButton = styled.div``;
-
-/**
- * BUTT STUFF :)
- */
 
 const Board = styled.div`
   width: 33vw;
@@ -368,7 +358,11 @@ const Table = styled.div`
   justify-content: space-around;
 `;
 
-const Container = styled.div``;
+const P1Cards = styled.div`
+  & > .card {
+    background-color: red;
+  }
+`;
 
 const P2Cards = styled.div`
   & > .card {
@@ -376,13 +370,7 @@ const P2Cards = styled.div`
   }
 `;
 
-const P1Cards = styled.div`
-  & > .card {
-    background-color: red;
-  }
-`;
-
-const TurnmarkerBlue = styled.div`
+const P2TurnMarker = styled.div`
   display: flex;
   align-self: center;
   width: 6vw;
@@ -393,7 +381,7 @@ const TurnmarkerBlue = styled.div`
   margin-top: -7vw;
 `;
 
-const TurnmarkerRed = styled.div`
+const P1TurnMarker = styled.div`
   display: flex;
   align-self: center;
   width: 6vw;
@@ -404,7 +392,7 @@ const TurnmarkerRed = styled.div`
   margin-top: -7vw;
 `;
 
-const ScoreBlue = styled.div`
+const P2Score = styled.div`
   display: flex;
   justify-content: center;
   width: 4vw;
@@ -414,7 +402,7 @@ const ScoreBlue = styled.div`
   margin-right: -10vw;
 `;
 
-const ScoreRed = styled.div`
+const P1Score = styled.div`
   display: flex;
   justify-content: center;
   width: 4vw;

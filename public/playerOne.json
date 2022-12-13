@@ -1,0 +1,84 @@
+     [
+        {
+        "id": 2001,
+        "name": "Earth Wolf",
+        "rarity": "rare",
+        "element": "earth"
+      },
+        {
+        "id": 2002,
+        "name": "Fire Wolf",
+        "rarity": "rare",
+        "element": "fire"
+      },
+      {
+        "id": 2003,
+        "name": "Water Wolf",
+        "rarity": "rare",
+        "element": "water"
+      },
+      {
+        "id": 2004,
+        "name": "Brown Roc",
+        "rarity": "rare"
+      },
+      {
+        "id": 2005,
+        "name": "Wild Hippo",
+        "rarity": "rare",
+        "element": "water"
+      },
+      {
+        "id": 2006,
+        "name": "Wild Board",
+        "rarity": "rare",
+        "element": "earth"
+      },
+      {
+        "id": 2007,
+        "name": "Corrupted Shark",
+        "rarity": "rare",
+        "element": "dark"
+      },
+      {
+        "id": 2008,
+        "name": "Life Reaper",
+        "rarity": "rare",
+        "element": "holy"
+      },
+      {
+        "id": 3001,
+        "name": "Gemstone Dragon Fire",
+        "rarity": "epic",
+        "element": "fire"
+      },
+      {
+        "id": 3002,
+        "name": "Gemstone Dragon Water",
+        "rarity": "epic",
+        "element": "water"
+      },
+      {
+        "id": 3003,
+        "name": "Gemstone Dragon Earth",
+        "rarity": "epic",
+        "element": "earth"
+      },
+      {
+        "id": 3004,
+        "name": "Hoarfrost Hind",
+        "rarity": "epic"
+      },
+      {
+        "id": 4001,
+        "name": "Sacred Beast Polar Bear",
+        "rarity": "legendary",
+        "element": "water"
+      },
+      {
+        "id": 4002,
+        "name": "Sacred Beast Tiger",
+        "rarity": "legendary",
+        "element": "fire"
+      }
+    ]
