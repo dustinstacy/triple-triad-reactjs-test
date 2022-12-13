@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext, createContext, useReducer, useCallback, useMemo } from "react";
 
-const CardsContext = createContext({});
+const CardLibraryContext = createContext({});
 
 export function useCards() {
-  return useContext(CardsContext);
+  return useContext(CardLibraryContext);
 }
 
 function useCardsSource() {
@@ -39,5 +39,5 @@ function useCardsSource() {
 }
 
 export function CardsProvider({ children }) {
-  return <CardsContext.Provider value={useCardsSource()}>{children}</CardsContext.Provider>;
+  return <CardLibraryContext.Provider value={useCardsSource()}>{children}</CardLibraryContext.Provider>;
 }

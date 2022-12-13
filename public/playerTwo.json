@@ -1,0 +1,157 @@
+     [ {
+        "id": 1,
+        "name": "Slime",
+        "rarity": "common"
+      },
+      {
+        "id": 2,
+        "name": "Fire Slime",
+        "rarity": "common",
+        "element": "fire"
+      },
+      {
+        "id": 3,
+        "name": "Earth Slime",
+        "rarity": "common",
+        "element": "earth"
+      },
+      {
+        "id": 4,
+        "name": "Water Slime",
+        "rarity": "common",
+        "element": "water"
+      },
+      {
+        "id": 5,
+        "name": "Holy Slime",
+        "rarity": "common",
+        "element": "holy"
+      },
+      {
+        "id": 6,
+        "name": "Dark Slime",
+        "rarity": "common",
+        "element": "dark"
+      },
+      {
+        "id": 7,
+        "name": "Mercenary A",
+        "rarity": "common"
+      },
+      {
+        "id": 8,
+        "name": "Mercenary B",
+        "rarity": "common"
+      },
+      {
+        "id": 9,
+        "name": "Town Guard A",
+        "rarity": "common"
+      },
+      {
+        "id": 10,
+        "name": "Town Guard B",
+        "rarity": "common"
+      },
+      {
+        "id": 11,
+        "name": "Town Guard C",
+        "rarity": "common"
+      },
+      {
+        "id": 12,
+        "name": "Skeleton Warrior A",
+        "rarity": "common"
+      },
+      {
+        "id": 13,
+        "name": "Skeleton Warrior B",
+        "rarity": "common"
+      },
+      {
+        "id": 14,
+        "name": "Dark Crow",
+        "rarity": "common",
+        "element": "dark"
+      },
+      {
+        "id": 15,
+        "name": "Ancient Owl",
+        "rarity": "common"
+      },
+      {
+        "id": 16,
+        "name": "Chicken",
+        "rarity": "common"
+      },
+      {
+        "id": 1001,
+        "name": "Fire Wisp",
+        "rarity": "uncommon",
+        "element": "fire"
+      },
+      {
+        "id": 1002,
+        "name": "Earth Wisp",
+        "rarity": "uncommon",
+        "element": "earth"
+      },
+      {
+        "id": 1003,
+        "name": "Water Wisp",
+        "rarity": "uncommon",
+        "element": "water"
+      },
+      {
+        "id": 1004,
+        "name": "Baetylus",
+        "rarity": "uncommon",
+        "element": "fire"
+      },
+      {
+        "id": 1005,
+        "name": "Black Roc",
+        "rarity": "uncommon"
+      },
+      {
+        "id": 1006,
+        "name": "Earth Priestess",
+        "rarity": "uncommon",
+        "element": "earth"
+      },
+      {
+        "id": 1007,
+        "name": "Fire Priestess",
+        "rarity": "uncommon",
+        "element": "fire"
+      },
+      {
+        "id": 1008,
+        "name": "Water Priestess",
+        "rarity": "uncommon",
+        "element": "water"
+      },
+      {
+        "id": 1009,
+        "name": "Mimic",
+        "rarity": "uncommon",
+        "element": "dark"
+      },
+      {
+        "id": 1010,
+        "name": "King Arthur",
+        "rarity": "uncommon",
+        "element": "holy"
+      },
+      {
+        "id": 1011,
+        "name": "Shark Warrior",
+        "rarity": "uncommon",
+        "element": "water"
+      },
+      {
+        "id": 1012,
+        "name": "Tricorn",
+        "rarity": "uncommon"
+      }
+    ]

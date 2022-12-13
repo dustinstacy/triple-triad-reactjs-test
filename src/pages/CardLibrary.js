@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCards, CardsProvider } from "../context/store";
+import { useCards, CardsProvider } from "../context/CardLibraryContext";
 import styled from "styled-components";
 
 const queryClient = new QueryClient();
