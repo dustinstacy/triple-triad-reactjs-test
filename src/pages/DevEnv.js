@@ -11,6 +11,7 @@ const handSize = 5;
 
 const DevEnv = () => {
   const { p1cards, p2cards } = useCardsCtx();
+
   const [boardArray, setBoardArray] = useState([]);
   const [p1Hand, setP1Hand] = useState([]);
   const [p2Hand, setP2Hand] = useState([]);
@@ -19,7 +20,11 @@ const DevEnv = () => {
   const [isP1Turn, setisP1Turn] = useState(true);
   const [p1Score, setP1Score] = useState(5);
   const [p2Score, setP2Score] = useState(5);
+
   const table = [...p1Hand, ...boardArray, ...p2Hand];
+
+  let p1ScoreCounter = 0;
+  let p2ScoreCounter = 0;
 
   const shuffleCards = useCallback((cards) => {
     let i = cards.length,
@@ -35,14 +40,46 @@ const DevEnv = () => {
     return cards;
   }, []);
 
-  const dealCards = useCallback((p1, p2) => {
-    for (let card = 0; card < handSize; card++) {
-      p1cards[card].owner = "red";
-      p1.push(p1cards[card]);
-      p2cards[card].owner = "blue";
-      p2.push(p2cards[card]);
+  const dealCards = useCallback(
+    (p1, p2) => {
+      for (let card = 0; card < handSize; card++) {
+        p1cards[card].owner = "red";
+        p1.push(p1cards[card]);
+        p2cards[card].owner = "blue";
+        p2.push(p2cards[card]);
+        console.log(p1cards);
+      }
+    },
+    [p1cards, p2cards]
+  );
+
+  const createBoard = useCallback(() => {
+    const emptyCellArray = [];
+    for (let i = 0; i < width * width; i++) {
+      const emptyCell = { empty: "true" };
+      emptyCellArray.push(emptyCell);
     }
+    setBoardArray(emptyCellArray);
   }, []);
+
+  const createHands = useCallback(() => {
+    const p1HandArray = [];
+    const p2HandArray = [];
+    dealCards(p1HandArray, p2HandArray);
+    setP1Hand(p1HandArray);
+    setP2Hand(p2HandArray);
+  }, [dealCards]);
+
+  const newGame = useCallback(() => {
+    shuffleCards(p1cards);
+    shuffleCards(p2cards);
+    createBoard();
+    createHands();
+  }, [shuffleCards, createBoard, createHands, p1cards, p2cards]);
+
+  useEffect(() => {
+    newGame();
+  }, [newGame]);
 
   const dragStart = (e) => {
     setCardBeingDragged(e.target);
@@ -56,17 +93,8 @@ const DevEnv = () => {
     const cellBeingFilledId = parseInt(cellBeingFilled.getAttribute("data-id"));
     const cardBeingDraggedId = parseInt(cardBeingDragged.getAttribute("data-id"));
 
-    const up = boardArray[cellBeingFilledId - width];
-    const right = boardArray[cellBeingFilledId + 1];
-    const left = boardArray[cellBeingFilledId - 1];
-    const down = boardArray[cellBeingFilledId + width];
-
-    let p1ScoreCounter = 0;
-    let p2ScoreCounter = 0;
-
     boardArray[cellBeingFilledId].empty = "false";
     cellBeingFilled.innerHTML = cardBeingDragged.innerHTML;
-    cardBeingDragged.innerHTML = "";
 
     if (isP1Turn) {
       boardArray[cellBeingFilledId] = {
@@ -79,6 +107,16 @@ const DevEnv = () => {
         ...p2Hand[cardBeingDraggedId],
       };
     }
+
+    processBattles(cellBeingFilledId);
+    endTurn(cardBeingDraggedId);
+  };
+
+  const processBattles = (cellBeingFilledId) => {
+    const up = boardArray[cellBeingFilledId - width];
+    const right = boardArray[cellBeingFilledId + 1];
+    const left = boardArray[cellBeingFilledId - 1];
+    const down = boardArray[cellBeingFilledId + width];
 
     if (cellBeingFilledId !== 0 && cellBeingFilledId !== 1 && cellBeingFilledId !== 2 && up.empty === "false") {
       if (up.values[3] < boardArray[cellBeingFilledId].values[0]) {
@@ -100,7 +138,9 @@ const DevEnv = () => {
         down.owner = boardArray[cellBeingFilledId].owner;
       }
     }
+  };
 
+  const endTurn = (cardBeingDraggedId) => {
     if (isP1Turn) {
       p1Hand.splice([cardBeingDraggedId], 1);
     } else if (!isP1Turn) {
@@ -124,30 +164,6 @@ const DevEnv = () => {
     setP2Score(p2ScoreCounter);
     setP1Score(p1ScoreCounter);
   };
-
-  const createBoard = useCallback(() => {
-    const emptyCellArray = [];
-    for (let i = 0; i < width * width; i++) {
-      const emptyCell = { empty: "true" };
-      emptyCellArray.push(emptyCell);
-    }
-    setBoardArray(emptyCellArray);
-  }, []);
-
-  const createHands = useCallback(() => {
-    const p1HandArray = [];
-    const p2HandArray = [];
-    shuffleCards(p1cards);
-    shuffleCards(p2cards);
-    dealCards(p1HandArray, p2HandArray);
-    setP1Hand(p1HandArray);
-    setP2Hand(p2HandArray);
-  }, []);
-
-  useEffect(() => {
-    createBoard();
-    createHands();
-  }, [createBoard, createHands]);
 
   return (
     <DevLayout>
