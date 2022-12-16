@@ -1,32 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Card from "../components/Card";
-import { cards } from "../card-data/card-data";
-import { useP1Cards, useP2Cards, OwnedCardsProvider } from "../context/OwnedCardsContext";
-
-const queryClient = new QueryClient();
-
-const MAX_VALUE = 10;
+import { useCardsCtx } from "../context/DemoCardsContext";
 
 // customizable options?
 const width = 3;
-const deckSize = 10;
-
-const Deck = () => {
-  const [p1Deck, setP1Deck] = useState([]);
-  const [p2Deck, setP2Deck] = useState([]);
-
-  // const p1Cards = useP1Cards();
-  const p2Cards = useP2Cards();
-
-  // console.log(p1Cards);
-  console.log(p2Cards);
-};
+const handSize = 5;
 
 const DevEnv = () => {
+  const { p1cards, p2cards } = useCardsCtx();
   const [boardArray, setBoardArray] = useState([]);
   const [p1Hand, setP1Hand] = useState([]);
   const [p2Hand, setP2Hand] = useState([]);
@@ -35,18 +19,7 @@ const DevEnv = () => {
   const [isP1Turn, setisP1Turn] = useState(true);
   const [p1Score, setP1Score] = useState(5);
   const [p2Score, setP2Score] = useState(5);
-
   const table = [...p1Hand, ...boardArray, ...p2Hand];
-
-  const randomIntFromInterval = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-
-  const common = randomIntFromInterval(8, 12);
-  const uncommon = randomIntFromInterval(13, 17);
-  const rare = randomIntFromInterval(18, 22);
-  const epic = randomIntFromInterval(23, 27);
-  const legendary = randomIntFromInterval(28, 32);
 
   const shuffleCards = useCallback((cards) => {
     let i = cards.length,
@@ -62,59 +35,14 @@ const DevEnv = () => {
     return cards;
   }, []);
 
-  const dealHands = useCallback((p1, p2) => {
-    for (let card = 0; card < deckSize; card++) {
-      // if even, move to p1 deck
-      if (card % 2 === 0) {
-        cards[card].owner = "red";
-        p1.push(cards[card]);
-        // if odd, move to p2 deck
-      } else if (card % 2 !== 0) {
-        cards[card].owner = "blue";
-        p2.push(cards[card]);
-      }
+  const dealCards = useCallback((p1, p2) => {
+    for (let card = 0; card < handSize; card++) {
+      p1cards[card].owner = "red";
+      p1.push(p1cards[card]);
+      p2cards[card].owner = "blue";
+      p2.push(p2cards[card]);
     }
   }, []);
-
-  const randomizeValues = useCallback((rarity, max, len = 4) => {
-    let startValues = new Array(len);
-    let sum = 0;
-    do {
-      for (let i = 0; i < len; i++) {
-        startValues[i] = Math.random();
-      }
-      sum = startValues.reduce((acc, val) => acc + val, 0);
-      const scale = (rarity - len) / sum;
-      startValues = startValues.map((val) => Math.min(max, Math.round(val * scale) + 1));
-      sum = startValues.reduce((acc, val) => acc + val, 0);
-    } while (sum - rarity);
-    const values = startValues.map((value) => {
-      if (value === 10) {
-        return "A";
-      }
-      return value;
-    });
-    return values;
-  }, []);
-
-  const assignRandomValues = useCallback(
-    (array) => {
-      array.forEach((card) => {
-        if (Object.values(card).includes("common")) {
-          card.values = randomizeValues(common, MAX_VALUE);
-        } else if (Object.values(card).includes("uncommon")) {
-          card.values = randomizeValues(uncommon, MAX_VALUE);
-        } else if (Object.values(card).includes("rare")) {
-          card.values = randomizeValues(rare, MAX_VALUE);
-        } else if (Object.values(card).includes("epic")) {
-          card.values = randomizeValues(epic, MAX_VALUE);
-        } else if (Object.values(card).includes("legendary")) {
-          card.values = randomizeValues(legendary, MAX_VALUE);
-        }
-      });
-    },
-    [epic, legendary, common, uncommon, rare, randomizeValues]
-  );
 
   const dragStart = (e) => {
     setCardBeingDragged(e.target);
@@ -209,10 +137,9 @@ const DevEnv = () => {
   const createHands = useCallback(() => {
     const p1HandArray = [];
     const p2HandArray = [];
-    shuffleCards(cards);
-    dealHands(p1HandArray, p2HandArray);
-    assignRandomValues(p1HandArray);
-    assignRandomValues(p2HandArray);
+    shuffleCards(p1cards);
+    shuffleCards(p2cards);
+    dealCards(p1HandArray, p2HandArray);
     setP1Hand(p1HandArray);
     setP2Hand(p2HandArray);
   }, []);
@@ -223,71 +150,75 @@ const DevEnv = () => {
   }, [createBoard, createHands]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <OwnedCardsProvider>
-        <DevLayout>
-          <Deck />
-          <Link to="/">
-            <Button label="Main Menu" />
-          </Link>
-          <Table>
-            <P1TurnMarker>{isP1Turn ? "-->" : ""}</P1TurnMarker>
-            <Hand>
-              {p1Hand.map((card, i) => (
-                <P1Cards
-                  key={card.number}
-                  data-id={i}
-                  draggable={isP1Turn ? true : false}
-                  onDragStart={dragStart}
-                  onDragEnd={dragEnd}
-                >
-                  <Card {...card} owner={card.owner}></Card>
-                </P1Cards>
-              ))}
-            </Hand>
-            <P1Score>{p1Score}</P1Score>
-            <Board>
-              {boardArray.map((_, i) => (
-                <Cell
-                  key={i}
-                  data-id={i}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={dragDrop}
-                  onDragEnd={dragEnd}
-                  style={{ backgroundColor: _.owner }}
-                ></Cell>
-              ))}
-            </Board>
-            <P2Score>{parseInt(p2Score)}</P2Score>
-            <Hand>
-              {p2Hand.map((card, i) => (
-                <P2Cards
-                  key={card.number}
-                  data-id={i}
-                  draggable={isP1Turn ? false : true}
-                  onDragStart={dragStart}
-                  onDragEnd={dragEnd}
-                >
-                  <Card {...card} owner={card.owner}></Card>
-                </P2Cards>
-              ))}
-            </Hand>
-            <P2TurnMarker>{isP1Turn ? "" : "<--"}</P2TurnMarker>
-          </Table>
-        </DevLayout>
-      </OwnedCardsProvider>
-    </QueryClientProvider>
+    <DevLayout>
+      <ButtonBar>
+        <Link to="/">
+          <Button label="Main Menu" />
+        </Link>
+        <Link to="/DevEnv">
+          <Button label="Reset" />
+        </Link>
+      </ButtonBar>
+      <Table>
+        <P1TurnMarker>{isP1Turn ? "-->" : ""}</P1TurnMarker>
+        <Hand>
+          {p1Hand.map((card, i) => (
+            <P1Cards
+              key={card.id}
+              data-id={i}
+              draggable={isP1Turn ? true : false}
+              onDragStart={dragStart}
+              onDragEnd={dragEnd}
+            >
+              <Card {...card} owner={card.owner}></Card>
+            </P1Cards>
+          ))}
+        </Hand>
+        <P1Score>{p1Score}</P1Score>
+        <Board>
+          {boardArray.map((_, i) => (
+            <Cell
+              key={i}
+              data-id={i}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={dragDrop}
+              onDragEnd={dragEnd}
+              style={{ backgroundColor: _.owner }}
+            ></Cell>
+          ))}
+        </Board>
+        <P2Score>{parseInt(p2Score)}</P2Score>
+        <Hand>
+          {p2Hand.map((card, i) => (
+            <P2Cards
+              key={card.id}
+              data-id={i}
+              draggable={isP1Turn ? false : true}
+              onDragStart={dragStart}
+              onDragEnd={dragEnd}
+            >
+              <Card {...card} owner={card.owner}></Card>
+            </P2Cards>
+          ))}
+        </Hand>
+        <P2TurnMarker>{isP1Turn ? "" : "<--"}</P2TurnMarker>
+      </Table>
+    </DevLayout>
   );
 };
 
 const DevLayout = styled.div`
-  width: 100vw;
+  width: 99vw;
   height: 100vh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   justify-content: space-around;
   align-items: center;
+  background-image: url("./images/stone_table.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const Board = styled.div`
@@ -303,7 +234,7 @@ const Board = styled.div`
 const Cell = styled.div`
   width: 10.5vw;
   height: 14.7vw;
-  border: 2px dotted black;
+  border: 2px dotted grey;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -410,6 +341,10 @@ const P1Score = styled.div`
   color: red;
   margin-right: -6vw;
   margin-left: -10vw;
+`;
+
+const ButtonBar = styled.div`
+  display: flex;
 `;
 
 export default DevEnv;

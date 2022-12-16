@@ -3,7 +3,7 @@ import styled from "styled-components";
 const Card = (card) => {
   return (
     <CardContainer className="card" name={card.name}>
-      <CharImage src={`../images/cardImages/card${card.number}.png`} alt={card.name}></CharImage>
+      <CharImage src={`../images/cardImages/card${card.id}.png`} alt={card.name}></CharImage>
       <Values>
         <Up>{card.values[0]}</Up>
         <Right>{card.values[1]}</Right>
