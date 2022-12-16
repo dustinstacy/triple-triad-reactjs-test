@@ -6,18 +6,26 @@ import Match from "./pages/Match";
 import MatchEnd from "./pages/MatchEnd";
 import DevEnv from "./pages/DevEnv";
 import CardLibrary from "./pages/CardLibrary";
+import { CardsProvider } from "./context/DemoCardsContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<Start />} />
-        <Route path="/Setup" element={<Setup />} />
-        <Route path="/Match" element={<Match />} />
-        <Route path="/MatchEnd" element={<MatchEnd />} />
-        <Route path="/DevEnv" element={<DevEnv />} />
-        <Route path="/CardLibrary" element={<CardLibrary />} />
-      </Routes>
-    </HashRouter>
+    <QueryClientProvider client={queryClient}>
+      <CardsProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Start />} />
+            <Route path="/Setup" element={<Setup />} />
+            <Route path="/Match" element={<Match />} />
+            <Route path="/MatchEnd" element={<MatchEnd />} />
+            <Route path="/DevEnv" element={<DevEnv />} />
+            <Route path="/CardLibrary" element={<CardLibrary />} />
+          </Routes>
+        </HashRouter>
+      </CardsProvider>
+    </QueryClientProvider>
   );
 }
