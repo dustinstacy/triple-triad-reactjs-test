@@ -8,7 +8,8 @@ const CardLibraryList = ({ activeFilters }) => {
     if (activeFilters === null) {
       return cards;
     } else {
-      return cards.filter((card) => card.element === activeFilters[0]);
+      console.log(activeFilters);
+      return cards.filter((card) => card.element === String(activeFilters));
     }
   };
 

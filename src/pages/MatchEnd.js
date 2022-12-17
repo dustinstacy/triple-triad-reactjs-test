@@ -2,10 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
+import Navbar from "../components/Navbar";
 
 export default function MatchEnd() {
   return (
     <MatchEndLayout>
+      <Navbar />
       <Winner>Winner</Winner>
       <Results>
         <Keeper>Keeper</Keeper>
@@ -27,25 +29,26 @@ export default function MatchEnd() {
 }
 
 const MatchEndLayout = styled.div`
-  width: calc(100vw - 10px);
-  height: calc(100vh - 10px);
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  min-width: 100vw;
   align-items: center;
-  justify-content: space-around;
-  margin: 2px;
-  border: 2px solid black;
+  background-size: cover;
+  position: absolute;
 `;
 
 const Winner = styled.div`
   width: 80vw;
   height: 12.5vw;
+  margin: 1vh 0vh;
   text-align: center;
   font-size: 10vw;
   border: 2px solid black;
 `;
 
 const Results = styled.div`
+  margin: 1vh 0vh;
   width: 60vw;
   height: 25vw;
   display: flex;
@@ -71,6 +74,7 @@ const Stats = styled.div`
 const ButtonBar = styled.div`
   width: 60vw;
   height: 7vw;
+  margin: 1vh 0vh;
   display: flex;
   align-items: center;
   justify-content: space-around;
