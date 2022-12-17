@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import Button from "../components/Button";
 import Card from "../components/Card";
+import Navbar from "../components/Navbar";
 import { useCardsCtx } from "../context/DemoCardsContext";
 
 // customizable options?
@@ -167,14 +166,7 @@ const DevEnv = () => {
 
   return (
     <DevLayout>
-      <ButtonBar>
-        <Link to="/">
-          <Button label="Main Menu" />
-        </Link>
-        <Link to="/DevEnv">
-          <Button label="Reset" />
-        </Link>
-      </ButtonBar>
+      <Navbar />
       <Table>
         <P1TurnMarker>{isP1Turn ? "-->" : ""}</P1TurnMarker>
         <Hand>
@@ -224,17 +216,14 @@ const DevEnv = () => {
 };
 
 const DevLayout = styled.div`
-  width: 99vw;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  justify-content: space-around;
-  align-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
   background-image: url("./images/stone_table.png");
+  background-attachment: fixed;
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: absolute;
 `;
 
 const Board = styled.div`
@@ -261,9 +250,8 @@ const Cell = styled.div`
 `;
 
 const Hand = styled.div`
-  height: 100%;
   width: 14vw;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
 
@@ -298,8 +286,7 @@ const Hand = styled.div`
 `;
 
 const Table = styled.div`
-  width: 100vw;
-  height: 100%;
+  margin-top: 40px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-around;
@@ -357,10 +344,6 @@ const P1Score = styled.div`
   color: red;
   margin-right: -6vw;
   margin-left: -10vw;
-`;
-
-const ButtonBar = styled.div`
-  display: flex;
 `;
 
 export default DevEnv;

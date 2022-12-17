@@ -5,6 +5,7 @@ import Filter from "../components/Filter";
 import { useState } from "react";
 import CardLibraryList from "../components/CardLibraryList";
 import SearchBar from "../components/SearchBar";
+import Navbar from "../components/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ export default function CardLibrary() {
       <CardsProvider>
         <Background>
           <PageContainer>
+            <Navbar />
             <SearchBar />
             <Filter setActiveFilters={setActiveFilters} />
             <CardLibraryList activeFilters={activeFilters} />

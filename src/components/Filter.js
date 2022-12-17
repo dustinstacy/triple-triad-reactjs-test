@@ -4,9 +4,9 @@ function Filter({ setActiveFilters }) {
   return (
     <FilterContainer>
       <FilterButton onClick={() => setActiveFilters(null)}>All</FilterButton>
-      <FilterButton onClick={() => setActiveFilters(["fire"])}>Fire</FilterButton>
+      <FilterButton onClick={() => !setActiveFilters(["fire"])}>Fire</FilterButton>
       <FilterButton onClick={() => setActiveFilters(["water"])}>Water</FilterButton>
-      <FilterButton onClick={() => setActiveFilters(["earth"])}>Earth</FilterButton>
+      <FilterButton onClick={() => setActiveFilters((current) => [...current, "earth"])}>Earth</FilterButton>
       <FilterButton onClick={() => setActiveFilters(["holy"])}>Holy</FilterButton>
       <FilterButton onClick={() => setActiveFilters(["dark"])}>Dark</FilterButton>
       <FilterButton onClick={() => setActiveFilters([])}>None</FilterButton>
