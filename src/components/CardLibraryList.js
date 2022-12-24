@@ -4,18 +4,23 @@ import styled from "styled-components";
 const CardLibraryList = ({ activeFilters }) => {
   const { cards } = useCards();
 
-  const filteredCards = () => {
+  const filterCards = () => {
+    let filteredCards = [];
     if (activeFilters === null) {
-      return cards;
+      filteredCards = [...cards];
     } else {
       console.log(activeFilters);
-      return cards.filter((card) => card.element === String(activeFilters));
+      activeFilters.forEach((filter) => {
+        console.log(filter);
+        filteredCards = [...filteredCards, ...cards.filter((card) => card.element === filter)];
+      });
     }
+    return filteredCards;
   };
 
   return (
     <CardsContainer>
-      {filteredCards().map((card) => (
+      {filterCards().map((card) => (
         <CardBox key={card.id}>
           <div>
             <CardImage src={`../images/cardImages/card${card.id}.png`} alt={card.name}></CardImage>
