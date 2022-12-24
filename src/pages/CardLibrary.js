@@ -19,7 +19,7 @@ export default function CardLibrary() {
           <PageContainer>
             <Navbar />
             <SearchBar />
-            <Filter setActiveFilters={setActiveFilters} />
+            <Filter activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
             <CardLibraryList activeFilters={activeFilters} />
           </PageContainer>
         </Background>
