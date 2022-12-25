@@ -129,7 +129,7 @@ const DevEnv = () => {
       if (cell.empty === "false") {
         cell.values.forEach((value) => {
           if (value === "A") {
-            cell.values[value] = 10;
+            cell.values.splice(cell.values.indexOf(value), 1, 10);
           }
         });
       }
@@ -155,6 +155,16 @@ const DevEnv = () => {
         down.owner = boardArray[cellBeingFilledId].owner;
       }
     }
+
+    boardArray.forEach((cell) => {
+      if (cell.empty === "false") {
+        cell.values.forEach((value) => {
+          if (value === 10) {
+            cell.values.splice(cell.values.indexOf(value), 1, "A");
+          }
+        });
+      }
+    });
   };
 
   const checkForWin = () => {
