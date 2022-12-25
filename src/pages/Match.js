@@ -9,6 +9,8 @@ const width = 3;
 const handSize = 5;
 
 const Match = () => {
+  window.onbeforeunload = () => "error";
+
   const { p1cards, p2cards } = useCardsCtx();
 
   const [boardArray, setBoardArray] = useState([]);
@@ -19,6 +21,9 @@ const Match = () => {
   const [isP1Turn, setisP1Turn] = useState(true);
   const [p1Score, setP1Score] = useState(5);
   const [p2Score, setP2Score] = useState(5);
+
+  let p1HandArray = [];
+  let p2HandArray = [];
 
   const table = [...p1Hand, ...boardArray, ...p2Hand];
 
@@ -62,8 +67,6 @@ const Match = () => {
   }, []);
 
   const createHands = useCallback(() => {
-    const p1HandArray = [];
-    const p2HandArray = [];
     dealCards(p1HandArray, p2HandArray);
     setP1Hand(p1HandArray);
     setP2Hand(p2HandArray);
