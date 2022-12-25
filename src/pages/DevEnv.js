@@ -117,6 +117,17 @@ const DevEnv = () => {
     const left = boardArray[cellBeingFilledId - 1];
     const down = boardArray[cellBeingFilledId + width];
 
+    boardArray.forEach((cell) => {
+      if (cell.empty === "false") {
+        cell.values.forEach((value) => {
+          if (value === "A") {
+            cell.values[value] = 10;
+          }
+          console.log(value);
+        });
+      }
+    });
+
     if (cellBeingFilledId !== 0 && cellBeingFilledId !== 1 && cellBeingFilledId !== 2 && up.empty === "false") {
       if (up.values[3] < boardArray[cellBeingFilledId].values[0]) {
         up.owner = boardArray[cellBeingFilledId].owner;
@@ -135,6 +146,19 @@ const DevEnv = () => {
     if (cellBeingFilledId !== 6 && cellBeingFilledId !== 7 && cellBeingFilledId !== 8 && down.empty === "false") {
       if (down.values[0] < boardArray[cellBeingFilledId].values[3]) {
         down.owner = boardArray[cellBeingFilledId].owner;
+      }
+    }
+  };
+
+  const checkForWin = () => {
+    if (boardArray.every((cell) => cell.empty === "false")) {
+      console.log("game over");
+      if (p1Score > p2Score) {
+        console.log("p1 wins");
+      } else if (p1Score < p2Score) {
+        console.log("p2 wins");
+      } else if (p1Score === p2Score) {
+        console.log("Draw");
       }
     }
   };
@@ -162,6 +186,7 @@ const DevEnv = () => {
 
     setP2Score(p2ScoreCounter);
     setP1Score(p1ScoreCounter);
+    checkForWin();
   };
 
   return (

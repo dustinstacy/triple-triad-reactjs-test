@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Start from "./pages/Start";
 import Setup from "./pages/Setup";
 import Match from "./pages/Match";
@@ -15,7 +15,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <CardsProvider>
-        <HashRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Start />} />
             <Route path="/Setup" element={<Setup />} />
@@ -24,7 +24,7 @@ export default function App() {
             <Route path="/DevEnv" element={<DevEnv />} />
             <Route path="/CardLibrary" element={<CardLibrary />} />
           </Routes>
-        </HashRouter>
+        </BrowserRouter>
       </CardsProvider>
     </QueryClientProvider>
   );
