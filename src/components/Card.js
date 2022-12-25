@@ -35,7 +35,7 @@ const CharImage = styled.img`
 const Values = styled.div`
   color: white;
   font-weight: bold;
-  font-size: 1.25vw;
+  font-size: 1.4vw;
   pointer-events: none;
   z-index: 99;
   position: absolute;
@@ -44,25 +44,25 @@ const Values = styled.div`
 const Up = styled.span`
   display: flex;
   margin-top: 0.25vw;
-  margin-left: 7vw;
+  margin-left: 7.2vw;
 `;
 
 const Right = styled.span`
   display: flex;
-  margin-top: -0.75vw;
-  margin-left: 6vw;
+  margin-top: -0.6vw;
+  margin-left: 6.2vw;
 `;
 
 const Left = styled.span`
   display: flex;
-  margin-top: -1.7vw;
-  margin-left: 8vw;
+  margin-top: -1.65vw;
+  margin-left: 8.2vw;
 `;
 
 const Down = styled.span`
   display: flex;
-  margin-top: -0.75vw;
-  margin-left: 7vw;
+  margin-top: -0.7vw;
+  margin-left: 7.2vw;
 `;
 
 export default Card;
