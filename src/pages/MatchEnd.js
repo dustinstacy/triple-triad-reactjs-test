@@ -1,14 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
 
 export default function MatchEnd() {
+  const location = useLocation();
+  console.log(location.state.winner);
+
   return (
     <MatchEndLayout>
       <Navbar />
-      <Winner>Winner</Winner>
+      <Winner>{location.state.winner}</Winner>
       <Results>
         <Keeper>Keeper</Keeper>
         <Stats>Stats</Stats>

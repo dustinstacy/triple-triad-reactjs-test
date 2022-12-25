@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Card from "../components/Card";
 import Navbar from "../components/Navbar";
@@ -9,6 +10,14 @@ const width = 3;
 const handSize = 5;
 
 const DevEnv = () => {
+  const navigate = useNavigate();
+
+  const navigateToEndScreen = () => {
+    navigate("/MatchEnd", {
+      state: { winner: winner },
+    });
+  };
+
   const { p1cards, p2cards } = useCardsCtx();
 
   const [boardArray, setBoardArray] = useState([]);
@@ -19,11 +28,11 @@ const DevEnv = () => {
   const [isP1Turn, setisP1Turn] = useState(true);
   const [p1Score, setP1Score] = useState(5);
   const [p2Score, setP2Score] = useState(5);
-
   const table = [...p1Hand, ...boardArray, ...p2Hand];
 
   let p1ScoreCounter = 0;
   let p2ScoreCounter = 0;
+  let winner = "Draw";
 
   const shuffleCards = useCallback((cards) => {
     let i = cards.length,
@@ -46,7 +55,6 @@ const DevEnv = () => {
         p1.push(p1cards[card]);
         p2cards[card].owner = "blue";
         p2.push(p2cards[card]);
-        console.log(p1cards);
       }
     },
     [p1cards, p2cards]
@@ -123,7 +131,6 @@ const DevEnv = () => {
           if (value === "A") {
             cell.values[value] = 10;
           }
-          console.log(value);
         });
       }
     });
@@ -155,11 +162,14 @@ const DevEnv = () => {
       console.log("game over");
       if (p1Score > p2Score) {
         console.log("p1 wins");
+        winner = "Player One Wins!";
       } else if (p1Score < p2Score) {
         console.log("p2 wins");
+        winner = "Player Two Wins!";
       } else if (p1Score === p2Score) {
         console.log("Draw");
       }
+      navigateToEndScreen();
     }
   };
 
